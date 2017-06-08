@@ -1,9 +1,12 @@
 package com.liwy.easyhttp;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 
 /**
@@ -13,8 +16,9 @@ import retrofit2.Call;
  */
 
 public abstract class AbHttpService implements IHttpService {
-    public Map<Object, Call> currentCalls = new HashMap<>();
+    private OkHttpClient okHttpClient;
 
+    public Map<Object, Call> currentCalls = new HashMap<>();
 
     /**
      * cancel the request call
@@ -24,7 +28,7 @@ public abstract class AbHttpService implements IHttpService {
         Call call = currentCalls.get(tag);
         if (call != null && !call.isCanceled()) {
             call.cancel();
-        }
+        };
         currentCalls.remove(tag);
     }
 
@@ -47,5 +51,40 @@ public abstract class AbHttpService implements IHttpService {
         for (Object obj : keys){
             cancel(obj);
         }
+    }
+
+
+    /**
+     * 获取SuccesscCallback的泛型类型
+     * @param impl  SuccesscCallback的实现
+     * @return
+     */
+    protected Class getResultParameterClass(Object impl){
+        try {
+            Type[] types = impl.getClass().getGenericInterfaces();
+            String className;
+            if (types.length > 0){
+                Type type = types[0];
+                if (type instanceof ParameterizedType){
+                    ParameterizedType pType = (ParameterizedType)type;
+                    System.out.println(pType.getRawType().toString());
+                    //取得泛型类型的泛型参数
+                    Type[] tArgs = pType.getActualTypeArguments();
+                    if (tArgs.length > 0){
+                        Type realType = tArgs[0];
+                        String typeStr = realType.toString();
+                        String[] strings = typeStr.split(" ");
+                        className = strings[1];
+                        Class clazz =  Class.forName(className);
+                        return clazz;
+                    }
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 }

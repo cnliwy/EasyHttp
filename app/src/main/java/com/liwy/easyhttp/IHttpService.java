@@ -17,7 +17,7 @@ public interface IHttpService {
      * @param successCallback
      * @param errorCallback
      */
-    public void get(String url, Map<String, String> params, SuccessCallback successCallback, ErrorCallback errorCallback);
+    public <T> void get(String url, Map<String, Object> params, SuccessCallback<T> successCallback, ErrorCallback errorCallback);
 
     /**
      * post method
@@ -26,5 +26,5 @@ public interface IHttpService {
      * @param successCallback
      * @param errorCallback
      */
-    public void post(String url,Map<String, String> params,SuccessCallback successCallback,ErrorCallback errorCallback);
+    public  void post(String url,Map<String, Object> params,SuccessCallback successCallback,ErrorCallback errorCallback);
 }

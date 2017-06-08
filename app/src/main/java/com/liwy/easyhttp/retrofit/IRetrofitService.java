@@ -16,8 +16,8 @@ import retrofit2.http.Url;
 
 public interface IRetrofitService {
     @GET()
-    Observable<JsonObject> get(@Url String url, @QueryMap Map<String, String> params);
+    Observable<JsonObject> get(@Url String url, @QueryMap Map<String, Object> params);
 
     @POST()
-    Observable<JsonObject> post(@Url String url, @QueryMap Map<String, String> params);
+    Observable<JsonObject> post(@Url String url, @QueryMap Map<String, Object> params);
 }

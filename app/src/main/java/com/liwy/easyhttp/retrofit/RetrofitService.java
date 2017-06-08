@@ -64,8 +64,9 @@ public class RetrofitService extends AbHttpService {
     }
 
     @Override
-    public void get(String url, Map<String, String> params, final SuccessCallback successCallback,final ErrorCallback errorCallback) {
+    public <T> void get(String url, Map<String, Object> params, final SuccessCallback<T> successCallback,final ErrorCallback errorCallback) {
         if (params == null) params = new HashMap<>();
+        final Class<T> tClass = getResultParameterClass(successCallback);
         retrofitService.get(url,params).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<JsonObject>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -73,8 +74,8 @@ public class RetrofitService extends AbHttpService {
 
             @Override
             public void onNext(@NonNull JsonObject s) {
-                System.out.println("请求成功" + s);
-                if (successCallback != null)successCallback.success(s.toString());
+                System.out.println("retrofit请求成功" + s);
+                if (successCallback != null)successCallback.success((T)new Gson().fromJson(s,tClass));
             }
 
             @Override
@@ -90,7 +91,7 @@ public class RetrofitService extends AbHttpService {
     }
 
     @Override
-    public void post(String url, Map<String, String> params, final SuccessCallback successCallback, final ErrorCallback errorCallback) {
+    public void post(String url, Map<String, Object> params, final SuccessCallback successCallback, final ErrorCallback errorCallback) {
         if (params == null) params = new HashMap<>();
         retrofitService.post(url,params).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<JsonObject>() {
             @Override

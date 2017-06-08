@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by liwy on 2017/6/5.
  */
 
-public class HttpUtils implements IHttpService{
+public class HttpUtils{
     private static HttpUtils instance;
     private IHttpService httpService;
     private Context context;
@@ -41,29 +41,36 @@ public class HttpUtils implements IHttpService{
      * @param url
      * @param params
      */
-    public void get(String url, Map<String,String> params,SuccessCallback successCallback,ErrorCallback errorCallback){
+    public <T> void get(String url, Map<String,Object> params,SuccessCallback<T> successCallback,ErrorCallback errorCallback){
         if (httpService != null)httpService.get(url,params,successCallback,errorCallback);
     }
+
 
     /**
      * post method
      * @param url
      * @param params
      */
-    public void post(String url, Map<String,String> params,SuccessCallback successCallback,ErrorCallback errorCallback){
+    public void post(String url, Map<String,Object> params,SuccessCallback successCallback,ErrorCallback errorCallback){
         if (httpService != null)httpService.post(url,params,successCallback,errorCallback);
     }
 
-    @Override
-    public IHttpService init() {
-        return null;
-    }
 
+    /**
+     *  set the implementation of IHttpService
+     * @param httpService OkHttpService or RetrofitService
+     * @return
+     */
     public HttpUtils setHttpService(IHttpService httpService) {
         this.httpService = httpService;
         return this;
     }
 
+    /**
+     * set the Context
+     * @param context
+     * @return
+     */
     public HttpUtils setContext(Context context) {
         this.context = context;
         return this;
@@ -74,7 +81,7 @@ public class HttpUtils implements IHttpService{
         private String url;
         private String tag;
         private boolean showDialog;
-        private Map<String,String> params;
+        private Map<String,Object> params;
         private SuccessCallback successCallback;
         private ErrorCallback errorCallback;
 
@@ -91,7 +98,7 @@ public class HttpUtils implements IHttpService{
             return this;
         }
 
-        public Builder setParams(Map<String, String> params) {
+        public Builder setParams(Map<String, Object> params) {
             this.params = params;
             return this;
         }

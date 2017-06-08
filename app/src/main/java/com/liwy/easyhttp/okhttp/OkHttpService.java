@@ -1,5 +1,6 @@
 package com.liwy.easyhttp.okhttp;
 
+import com.google.gson.Gson;
 import com.liwy.easyhttp.AbHttpService;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
@@ -8,6 +9,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.security.Key;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -46,14 +50,27 @@ public class OkHttpService extends AbHttpService {
         okHttpService.okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();;
         return okHttpService;
     }
+    public String makeGetUrl(String url,Map<String,Object> params){
+        StringBuffer sb = new StringBuffer(url);
+        if (params != null && params.size() > 0){
+            sb.append("?");
+            Set<String> keys = params.keySet();
+            for (String key : keys){
+                sb.append(key).append("=").append(params.get(key)).append("&");
+            }
+            sb.deleteCharAt(sb.length()-1);
+        }
+        return sb.toString();
+    }
 
     public static final MediaType JSON=MediaType.parse("application/json;charset=utf-8");
     @Override
-    public void get(String url, Map<String, String> params, final SuccessCallback successCallback, final ErrorCallback errorCallback) {
-        String content = map2json(params);
-        RequestBody formBody = RequestBody.create(JSON,content);
+    public <T> void get(String url, Map<String, Object> params, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+        final Class<T> responseClass = getResultParameterClass(successCallback);
+        System.out.println(responseClass.getName());
+        String realUrl = makeGetUrl(url,params);//generate get url
 
-        Request request = new Request.Builder().url(url).get().build();
+        Request request = new Request.Builder().url(realUrl).get().build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -71,14 +88,22 @@ public class OkHttpService extends AbHttpService {
                 Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
                     @Override
                     public void run() throws Exception {
-                        if (successCallback != null)successCallback.success(response.body().string());
+                        System.out.println("转换，请求成功");
+                        if (successCallback != null){
+                            if (responseClass == String.class){
+                                successCallback.success((T)response.body().string());
+                            }else{
+                                successCallback.success((T) new Gson().fromJson(response.body().string(),responseClass));
+                            }
+                        }
+
                     }
                 }).subscribe();
             }
         });
     }
 
-    public static String map2json(Map<String,String> params){
+    public static String map2json(Map<String,Object> params){
         JSONObject jsonObject = new JSONObject();
         if (params != null){
             Set<String> keys = params.keySet();
@@ -97,7 +122,7 @@ public class OkHttpService extends AbHttpService {
     }
 
     @Override
-    public void post(String url, Map<String, String> params, final SuccessCallback successCallback, final ErrorCallback errorCallback) {
+    public void post(String url, Map<String, Object> params, final SuccessCallback successCallback, final ErrorCallback errorCallback) {
         String content = map2json(params);
         RequestBody formBody = RequestBody.create(JSON,content);
 

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RetrofitHttp</string>
+    <string name="main_name">RetrofitService</string>
+    <string name="next_name">OkHttpService</string>
 </resources>
