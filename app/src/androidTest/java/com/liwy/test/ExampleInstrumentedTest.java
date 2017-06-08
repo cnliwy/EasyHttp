@@ -1,4 +1,4 @@
-package com.liwy.easyhttp;
+package com.liwy.test;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

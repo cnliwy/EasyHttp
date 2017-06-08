@@ -1,4 +1,4 @@
-package com.liwy.easyhttp.test;
+package com.liwy.test;
 
 import com.google.gson.annotations.SerializedName;
 

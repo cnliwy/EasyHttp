@@ -1,16 +1,12 @@
-package com.liwy.easyhttp.test;
+package com.liwy.test;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.liwy.easyhttp.HttpUtils;
-import com.liwy.easyhttp.R;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.easyhttp.retrofit.RetrofitService;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;

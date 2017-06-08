@@ -1,14 +1,12 @@
-package com.liwy.easyhttp;
+package com.liwy.test;
 
-import com.liwy.easyhttp.callback.SuccessCallback;
-import com.liwy.easyhttp.test.TestResult;
+import com.liwy.test.callback.SuccessCallback;
 
 import org.junit.Test;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import static android.R.attr.type;
 import static org.junit.Assert.*;
 
 /**

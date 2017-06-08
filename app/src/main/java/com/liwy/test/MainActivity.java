@@ -1,4 +1,4 @@
-package com.liwy.easyhttp.test;
+package com.liwy.test;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.liwy.easyhttp.HttpUtils;
-import com.liwy.easyhttp.R;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.easyhttp.okhttp.OkHttpService;

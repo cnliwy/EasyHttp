@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.liwy.easyhttp">
+    package="com.liwy.test">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.liwy.easyhttp.test.MainActivity"
+        <activity android:name="com.liwy.test.MainActivity"
             android:label="@string/main_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.liwy.easyhttp.test.NextActivity"
+        <activity android:name="com.liwy.test.NextActivity"
             android:label="@string/next_name"></activity>
     </application>
 
