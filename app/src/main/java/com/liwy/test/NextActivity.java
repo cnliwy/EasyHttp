@@ -3,7 +3,7 @@ package com.liwy.test;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.liwy.easyhttp.HttpUtils;
+import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.easyhttp.retrofit.RetrofitService;
@@ -23,20 +23,20 @@ public class NextActivity extends AppCompatActivity {
     }
 
     /**
-     * initialize the HttpUtils with retrofitService
+     * initialize the EasyHttp with retrofitService
      */
     public void init(){
         RetrofitService retrofitService = new RetrofitService().init();
-        HttpUtils.getInstance().setHttpService(retrofitService);
+        EasyHttp.getInstance().setHttpService(retrofitService);
     }
 
     /**
-     * use the get request of HttpUtils
+     * use the get request of EasyHttp
      */
     public void get(){
         Map<String,Object> params = new HashMap<>();
         params.put("ver","1");
-        HttpUtils.getInstance().get("/login/update", params, new SuccessCallback<TestResult>() {
+        EasyHttp.getInstance().get("/login/update", params, new SuccessCallback<TestResult>() {
             @Override
             public void success(TestResult result) {
 //                    JSONObject jsonObject = new JSONObject(result);
@@ -51,12 +51,12 @@ public class NextActivity extends AppCompatActivity {
     }
 
     /**
-     *  use the get request of HttpUtils by Builder
+     *  use the get request of EasyHttp by Builder
      */
     public void getByBuilder(){
 //        Map<String,String> params = new HashMap<>();
 //        params.put("ver","1");
-//        new HttpUtils.Builder().setUrl("/login/update").setParams(params).setSuccessCallback(new SuccessCallback() {
+//        new EasyHttp.Builder().setUrl("/login/update").setParams(params).setSuccessCallback(new SuccessCallback() {
 //            @Override
 //            public void success(String result) {
 //                System.out.println(result);

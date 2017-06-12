@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.liwy.easyhttp.HttpUtils;
+import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.easyhttp.okhttp.OkHttpService;
@@ -42,13 +42,13 @@ public class MainActivity extends AppCompatActivity {
     public void init(){
         OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();
         OkHttpService okHttpService = new OkHttpService().init(okHttpClient);
-        HttpUtils.getInstance().setHttpService(okHttpService);
+        EasyHttp.getInstance().setHttpService(okHttpService);
     }
 
     public void get(){
         Map<String,Object> params = new HashMap<>();
         params.put("ver","1");
-        HttpUtils.getInstance().get("http://192.168.131.19:8886/login/update?ver=1", params, new SuccessCallback<TestResult>() {
+        EasyHttp.getInstance().get("http://192.168.131.19:8886/login/update?ver=1", params, new SuccessCallback<TestResult>() {
             @Override
             public void success(TestResult result) {
                 System.out.println(result.toString());
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     public void getByBuilder(){
         Map<String,Object> params = new HashMap<>();
         params.put("ver","1");
-        new HttpUtils.Builder().setUrl("http://192.168.131.19:8886/login/update").setParams(params).setSuccessCallback(new SuccessCallback<String>() {
+        new EasyHttp.Builder().setUrl("http://192.168.131.19:8886/login/update").setParams(params).setSuccessCallback(new SuccessCallback<String>() {
             @Override
             public void success(String result) {
                 contentTv.setText("Build String = " + result);

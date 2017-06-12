@@ -12,23 +12,23 @@ import java.util.Map;
  * Created by liwy on 2017/6/5.
  */
 
-public class HttpUtils{
-    private static HttpUtils instance;
+public class EasyHttp {
+    private static EasyHttp instance;
     private IHttpService httpService;
     private Context context;
 
-    public HttpUtils() {
+    public EasyHttp() {
     }
 
     /**
-     * get the single instance of HttpUtils
+     * get the single instance of EasyHttp
      * @return
      */
-    public static HttpUtils getInstance(){
+    public static EasyHttp getInstance(){
         if (instance == null){
-            synchronized (HttpUtils.class){
+            synchronized (EasyHttp.class){
                 if (instance == null){
-                    instance = new HttpUtils();
+                    instance = new EasyHttp();
                 }
                 return instance;
             }
@@ -62,7 +62,7 @@ public class HttpUtils{
      * @param httpService OkHttpService or RetrofitService
      * @return
      */
-    public HttpUtils setHttpService(IHttpService httpService) {
+    public EasyHttp setHttpService(IHttpService httpService) {
         this.httpService = httpService;
         return this;
     }
@@ -72,7 +72,7 @@ public class HttpUtils{
      * @param context
      * @return
      */
-    public HttpUtils setContext(Context context) {
+    public EasyHttp setContext(Context context) {
         this.context = context;
         return this;
     }
@@ -80,18 +80,16 @@ public class HttpUtils{
 
     public static class Builder{
         private String url;
-        private String tag;
-        private boolean showDialog;
         private Map<String,Object> params;
         private SuccessCallback successCallback;
         private ErrorCallback errorCallback;
 
         public void get(){
-            HttpUtils.getInstance().get(url,params,successCallback,errorCallback);
+            EasyHttp.getInstance().get(url,params,successCallback,errorCallback);
         }
 
         public void post(){
-            HttpUtils.getInstance().post(url,params,successCallback,errorCallback);
+            EasyHttp.getInstance().post(url,params,successCallback,errorCallback);
         }
 
         public Builder setUrl(String url) {
@@ -111,16 +109,6 @@ public class HttpUtils{
 
         public Builder setErrorCallback(ErrorCallback errorCallback) {
             this.errorCallback = errorCallback;
-            return this;
-        }
-
-        public Builder setTag(String tag) {
-            this.tag = tag;
-            return this;
-        }
-
-        public Builder setShowDialog(boolean showDialog) {
-            this.showDialog = showDialog;
             return this;
         }
     }
