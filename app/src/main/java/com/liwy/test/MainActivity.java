@@ -36,36 +36,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         contentTv = (TextView)findViewById(R.id.tv_content);
-        init();
         getByBuilder();
     }
-    public void init(){
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();
-        OkHttpService okHttpService = new OkHttpService().init(okHttpClient);
-        EasyHttp.getInstance().setHttpService(okHttpService);
-    }
 
-    public void get(){
-        Map<String,Object> params = new HashMap<>();
-        params.put("ver","1");
-        EasyHttp.getInstance().get("http://192.168.131.19:8886/login/update?ver=1", params, new SuccessCallback<TestResult>() {
-            @Override
-            public void success(TestResult result) {
-                System.out.println(result.toString());
-                contentTv.setText("转换成功" + result.toString());
-            }
-        }, new ErrorCallback() {
-            @Override
-            public void error(Object... values) {
-                contentTv.setText("请求失败");
-            }
-        });
-    }
-
+    /**
+     * if the IHttpService Implement is RetrofitService
+     * setUrl("/login/update")
+     *
+     * if OkHttpService
+     * setUrl("http://192.168.131.192:8886/login/update")
+     */
     public void getByBuilder(){
         Map<String,Object> params = new HashMap<>();
         params.put("ver","1");
-        new EasyHttp.Builder().setUrl("http://192.168.131.19:8886/login/update").setParams(params).setSuccessCallback(new SuccessCallback<String>() {
+        new EasyHttp.Builder().setUrl("/login/update").setTag("update").setParams(params).setSuccessCallback(new SuccessCallback<String>() {
             @Override
             public void success(String result) {
                 contentTv.setText("Build String = " + result);
@@ -76,5 +60,12 @@ public class MainActivity extends AppCompatActivity {
                 contentTv.setText("请求失败");
             }
         }).get();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // cancel the request if activity will destroy ,no matter if the http request completed or not.
+        EasyHttp.getInstance().cancelHttp("update");
     }
 }

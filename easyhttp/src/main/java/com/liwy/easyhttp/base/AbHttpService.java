@@ -1,13 +1,9 @@
-package com.liwy.easyhttp;
+package com.liwy.easyhttp.base;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
 
 /**
  * 可取消缓存的网络请求抽象类
@@ -16,41 +12,23 @@ import retrofit2.Call;
  */
 
 public abstract class AbHttpService implements IHttpService {
-    private OkHttpClient okHttpClient;
-
-    public Map<Object, Call> currentCalls = new HashMap<>();
+    protected Map<Object, Object> calls = new HashMap<>();
 
     /**
-     * cancel the request call
+     * add the request to cache
      * @param tag
+     * @param call Call
      */
-    public void cancel(Object tag) {
-        Call call = currentCalls.get(tag);
-        if (call != null && !call.isCanceled()) {
-            call.cancel();
-        };
-        currentCalls.remove(tag);
+    protected void addCall(Object tag,Object call){
+        if (tag != null && call != null)calls.put(tag, call);
     }
 
     /**
-     * 将当前请求添加到缓存
-     * add the request call to map
+     * remove the call when request is successful or failed
      * @param tag
-     * @param call
      */
-    public void add(Object tag, Call call) {
-        currentCalls.put(tag, call);
-    }
-
-    /**
-     * 结束所有请求，并清空缓存
-     * finish all request and clear the map
-     */
-    public void clearAll(){
-        Set<Object> keys = currentCalls.keySet();
-        for (Object obj : keys){
-            cancel(obj);
-        }
+    protected void removeCall(Object tag) {
+        if (tag != null)calls.remove(tag);
     }
 
 

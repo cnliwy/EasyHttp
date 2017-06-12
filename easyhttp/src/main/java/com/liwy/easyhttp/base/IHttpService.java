@@ -1,4 +1,4 @@
-package com.liwy.easyhttp;
+package com.liwy.easyhttp.base;
 
 
 import com.liwy.easyhttp.callback.ErrorCallback;
@@ -15,17 +15,26 @@ public interface IHttpService {
      * get method
      * @param url
      * @param params
+     * @param tag
      * @param successCallback
      * @param errorCallback
      */
-    public <T> void get(String url, Map<String, Object> params, SuccessCallback<T> successCallback, ErrorCallback errorCallback);
+    public <T> void get(String url, Map<String, Object> params,Object tag, SuccessCallback<T> successCallback, ErrorCallback errorCallback);
 
     /**
      * post method
      * @param url
      * @param params
+     * @param tag
      * @param successCallback
      * @param errorCallback
      */
-    public  void post(String url, Map<String, Object> params, SuccessCallback successCallback, ErrorCallback errorCallback);
+    public <T> void post(String url, Map<String, Object> params,Object tag,  SuccessCallback<T> successCallback, ErrorCallback errorCallback);
+
+    /**
+     * cancel the request by tag
+     * @param tag
+     */
+    public void cancelHttp(Object tag);
+
 }

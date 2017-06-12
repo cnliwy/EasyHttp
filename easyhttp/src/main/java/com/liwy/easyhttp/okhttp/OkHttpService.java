@@ -3,7 +3,7 @@ package com.liwy.easyhttp.okhttp;
 
 
 import com.google.gson.Gson;
-import com.liwy.easyhttp.AbHttpService;
+import com.liwy.easyhttp.base.AbHttpService;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 
@@ -50,30 +50,22 @@ public class OkHttpService extends AbHttpService {
         okHttpService.okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();;
         return okHttpService;
     }
-    public String makeGetUrl(String url,Map<String,Object> params){
-        StringBuffer sb = new StringBuffer(url);
-        if (params != null && params.size() > 0){
-            sb.append("?");
-            Set<String> keys = params.keySet();
-            for (String key : keys){
-                sb.append(key).append("=").append(params.get(key)).append("&");
-            }
-            sb.deleteCharAt(sb.length()-1);
-        }
-        return sb.toString();
-    }
 
-    public static final MediaType JSON=MediaType.parse("application/json;charset=utf-8");
+
     @Override
-    public <T> void get(String url, Map<String, Object> params, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+    public <T> void get(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         final Class<T> responseClass = getResultParameterClass(successCallback);
         System.out.println(responseClass.getName());
         String realUrl = makeGetUrl(url,params);//generate get url
 
         Request request = new Request.Builder().url(realUrl).get().build();
+        Call call = okHttpClient.newCall(request);
+        if (tag != null)addCall(tag,call);
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, final IOException e) {
+                System.out.println("okhttp service 失败了");
+                removeCall(tag);
                 Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
                     @Override
                     public void run() throws Exception {
@@ -87,7 +79,7 @@ public class OkHttpService extends AbHttpService {
                 Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
                     @Override
                     public void run() throws Exception {
-                        System.out.println("转换，请求成功");
+                        removeCall(tag);
                         if (successCallback != null){
                             if (responseClass == String.class){
                                 successCallback.success((T)response.body().string());
@@ -102,7 +94,53 @@ public class OkHttpService extends AbHttpService {
         });
     }
 
-    public static String map2json(Map<String,Object> params){
+
+    private static final MediaType JSON=MediaType.parse("application/json;charset=utf-8");
+
+    @Override
+    public <T> void post(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+        String content = map2json(params);
+        RequestBody formBody = RequestBody.create(JSON,content);
+
+        Request request = new Request.Builder().url(url).post(formBody).build();
+        Call call = okHttpClient.newCall(request);
+        if (tag != null)addCall(tag,call);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (call.isCanceled()){
+
+                }else{
+                    removeCall(tag);
+                    if (errorCallback != null)errorCallback.error(e);
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                removeCall(tag);
+                if (successCallback != null)successCallback.success((T) response.body().string());
+            }
+        });
+    }
+
+
+    @Override
+    public void cancelHttp(Object tag) {
+        Call call = (Call)calls.get(tag);
+        if (tag != null){
+            if (!call.isCanceled())call.cancel();
+            calls.remove(tag);
+            System.out.println("okhttpservice 取消http成功");
+        }
+    }
+
+    /**
+     * convert map to json string
+     * @param params
+     * @return
+     */
+    private static String map2json(Map<String,Object> params){
         JSONObject jsonObject = new JSONObject();
         if (params != null){
             Set<String> keys = params.keySet();
@@ -120,23 +158,22 @@ public class OkHttpService extends AbHttpService {
         return jsonObject.toString();
     }
 
-    @Override
-    public void post(String url, Map<String, Object> params, final SuccessCallback successCallback, final ErrorCallback errorCallback) {
-        String content = map2json(params);
-        RequestBody formBody = RequestBody.create(JSON,content);
-
-        Request request = new Request.Builder().url(url).post(formBody).build();
-
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (errorCallback != null)errorCallback.error(e);
+    /**
+     * generate the url which is get request
+     * @param url
+     * @param params
+     * @return
+     */
+    private String makeGetUrl(String url,Map<String,Object> params){
+        StringBuffer sb = new StringBuffer(url);
+        if (params != null && params.size() > 0){
+            sb.append("?");
+            Set<String> keys = params.keySet();
+            for (String key : keys){
+                sb.append(key).append("=").append(params.get(key)).append("&");
             }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (successCallback != null)successCallback.success(response.body().string());
-            }
-        });
+            sb.deleteCharAt(sb.length()-1);
+        }
+        return sb.toString();
     }
 }
