@@ -16,7 +16,8 @@ EasyHttp.getInstance().setHttpService(okHttpService);
 RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
 EasyHttp.getInstance().setHttpService(retrofitService);
 ```
-3、 使用
+现实现了两种Http服务，分别是基于OkHttp和Retrofit。
+3、 使用<br/>
 get
 ```
         // 参数
