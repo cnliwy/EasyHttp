@@ -47,19 +47,24 @@ public class MainActivity extends AppCompatActivity {
      * setUrl("http://192.168.131.192:8886/login/update")
      */
     public void getByBuilder(){
+        // 参数
         Map<String,Object> params = new HashMap<>();
         params.put("ver","1");
-        new EasyHttp.Builder().setUrl("/login/update").setTag("update").setParams(params).setSuccessCallback(new SuccessCallback<String>() {
-            @Override
-            public void success(String result) {
-                contentTv.setText("Build String = " + result);
-            }
-        }).setErrorCallback(new ErrorCallback() {
-            @Override
-            public void error(Object... values) {
-                contentTv.setText("请求失败");
-            }
-        }).get();
+        new EasyHttp.Builder()
+                .setUrl("/login/update")
+                .setTag("update")
+                .setParams(params)
+                .setSuccessCallback(new SuccessCallback<String>() {
+                    @Override
+                    public void success(String result) {
+                        contentTv.setText("Build String = " + result);
+                    }})
+                .setErrorCallback(new ErrorCallback() {
+                    @Override
+                    public void error(Object... values) {
+                        contentTv.setText("请求失败");
+                    }})
+                .get();
     }
 
     @Override
