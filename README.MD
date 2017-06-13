@@ -3,7 +3,7 @@ EasyHttp 一个可扩展的Http框架
 一、使用
 ---
 1、 引入项目
-compile 'com.liwy.easyhttp:easyhttp:1.0.2'
+compile 'com.liwy.easyhttp:easyhttp:1.0.2'<br/>
 2、 初始化
 在Application里初始化如下：
 ```
@@ -16,7 +16,7 @@ EasyHttp.getInstance().setHttpService(okHttpService);
 RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
 EasyHttp.getInstance().setHttpService(retrofitService);
 ```
-现实现了两种Http服务，分别是基于OkHttp和Retrofit。
+现实现了两种Http服务，分别是基于OkHttp和Retrofit。<br/>
 3、 使用<br/>
 get
 ```
