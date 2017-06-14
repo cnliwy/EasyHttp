@@ -2,7 +2,7 @@ EasyHttp 一个可扩展的Http框架
 ===
 一、 引入项目
 ---
-compile 'com.liwy.easyhttp:easyhttp:1.0.2'
+compile 'com.liwy.easyhttp:easyhttp:1.0.3'
 
 二、 初始化
 ---
