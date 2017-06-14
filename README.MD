@@ -65,3 +65,21 @@ post
 ```
 EasyHttp.getInstance().cancelHttp("update");
 ```
+更新日志
+---
+1.0.3
+---
+1. 新增下载方法,OkHttpService和RetrofitService均已实现。
+2. EasyHttp新增获取Builder的静态方法
+    public static Builder getBuilder():
+3. 删除无用类
+    
+1.0.2
+---
+1. 完善EasyHttp初始化方法
+2. 新增Http请求中断功能
+3. 修复bug.
+
+1.0.1
+---
+1. 版本发布至Jcenter.

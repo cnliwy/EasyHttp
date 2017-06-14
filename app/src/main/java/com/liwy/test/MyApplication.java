@@ -28,7 +28,7 @@ public class MyApplication extends Application {
      * initialize the EasyHttp with okHttpService
      */
     public void initOkHttpService(){
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS).build();
         OkHttpService okHttpService = new OkHttpService().init(okHttpClient);
         EasyHttp.getInstance().setHttpService(okHttpService);
     }
@@ -38,7 +38,8 @@ public class MyApplication extends Application {
      * initialize the EasyHttp with retrofitService
      */
     public void initRetrofitService(){
-        RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
+//        RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
+        RetrofitService retrofitService = new RetrofitService().init("http://img5q.duitang.com/uploads/",5);
         EasyHttp.getInstance().setHttpService(retrofitService);
     }
 }

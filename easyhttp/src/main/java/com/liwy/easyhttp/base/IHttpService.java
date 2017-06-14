@@ -2,6 +2,7 @@ package com.liwy.easyhttp.base;
 
 
 import com.liwy.easyhttp.callback.ErrorCallback;
+import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 
 import java.util.Map;
@@ -30,6 +31,8 @@ public interface IHttpService {
      * @param errorCallback
      */
     public <T> void post(String url, Map<String, Object> params,Object tag,  SuccessCallback<T> successCallback, ErrorCallback errorCallback);
+
+    public <T> void download(String fileUrl, String destFileDir,String fileName,Object tag, DownloadCallback<T> downloadCallback);
 
     /**
      * cancel the request by tag

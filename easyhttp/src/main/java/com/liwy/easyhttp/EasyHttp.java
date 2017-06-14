@@ -3,6 +3,7 @@ package com.liwy.easyhttp;
 import android.content.Context;
 
 import com.liwy.easyhttp.base.IHttpService;
+import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 
@@ -17,7 +18,12 @@ public class EasyHttp implements IHttpService {
     private IHttpService httpService;
     private Context context;
 
-    public EasyHttp() {
+    protected EasyHttp() {
+
+    }
+
+    public static Builder getBuilder(){
+        return new Builder();
     }
 
     /**
@@ -57,6 +63,12 @@ public class EasyHttp implements IHttpService {
     }
 
     @Override
+    public <T> void download(String fileUrl, String destFileDir,String fileName,Object tag, DownloadCallback<T> downloadCallback) {
+        if (fileUrl == null)throw new NullPointerException("fileUrl can't be null!");
+        if (httpService != null)httpService.download(fileUrl,destFileDir,fileName,tag,downloadCallback);
+    }
+
+    @Override
     public void cancelHttp(Object tag) {
         if (httpService != null)httpService.cancelHttp(tag);
     }
@@ -83,11 +95,15 @@ public class EasyHttp implements IHttpService {
 
 
     public static class Builder{
-        private String url;
+        private String url;         // request url
         private Object tag;
+        private String fileUrl;     // download url
+        private String filePath;
+        private String fileName;
         private Map<String,Object> params;
         private SuccessCallback successCallback;
         private ErrorCallback errorCallback;
+        private DownloadCallback downloadCallback;
 
         public void get(){
             EasyHttp.getInstance().get(url,params,tag,successCallback,errorCallback);
@@ -95,6 +111,9 @@ public class EasyHttp implements IHttpService {
 
         public void post(){
             EasyHttp.getInstance().post(url,params,tag,successCallback,errorCallback);
+        }
+        public void download(){
+            EasyHttp.getInstance().download(fileUrl,filePath,fileName,tag,downloadCallback);
         }
 
         public Builder setUrl(String url) {
@@ -119,6 +138,26 @@ public class EasyHttp implements IHttpService {
 
         public Builder setTag(Object tag) {
             this.tag = tag;
+            return this;
+        }
+
+        public Builder setFileUrl(String fileUrl) {
+            this.fileUrl = fileUrl;
+            return this;
+        }
+
+        public Builder setFileName(String fileName) {
+            this.fileName = fileName;
+            return this;
+        }
+
+        public Builder setDownloadCallback(DownloadCallback downloadCallback) {
+            this.downloadCallback = downloadCallback;
+            return this;
+        }
+
+        public Builder setFilePath(String filePath) {
+            this.filePath = filePath;
             return this;
         }
     }

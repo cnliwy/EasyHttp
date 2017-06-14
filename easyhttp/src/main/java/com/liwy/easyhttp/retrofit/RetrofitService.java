@@ -1,11 +1,18 @@
 package com.liwy.easyhttp.retrofit;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.liwy.easyhttp.base.AbHttpService;
+import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -15,12 +22,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.R.attr.tag;
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by liwy on 2017/6/5.
@@ -68,7 +79,7 @@ public class RetrofitService extends AbHttpService {
         if (params == null) params = new HashMap<>();
         final Class<T> responseClass = getResultParameterClass(successCallback);
         Call<JsonObject> call = retrofitService.get(url,params);
-        if (tag != null)addCall(tag,call);
+        addCall(tag,call);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, final Response<JsonObject> response) {
@@ -107,7 +118,7 @@ public class RetrofitService extends AbHttpService {
         if (params == null) params = new HashMap<>();
         final Class<T> responseClass = getResultParameterClass(successCallback);
         Call<JsonObject> call = retrofitService.post(url,params);
-        if (tag != null)addCall(tag,call);
+        addCall(tag,call);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, final Response<JsonObject> response) {
@@ -140,6 +151,68 @@ public class RetrofitService extends AbHttpService {
                         }
                     }).subscribe();
                 }
+            }
+        });
+    }
+
+    @Override
+    public <T> void download(String fileUrl, String destFileDir, String fileName, final Object tag, final DownloadCallback<T> downloadCallback) {
+        if (fileName == null || "".equals(fileName))fileName = fileUrl;
+        final File file = new File(destFileDir, fileName);
+        if (file.exists()) {
+            System.out.println("file has already exists!");
+            downloadCallback.onSuccess((T)file);
+            return;
+        }
+        OkHttpClient client = okHttpClient.newBuilder().connectTimeout(1,TimeUnit.DAYS).readTimeout(1,TimeUnit.DAYS).writeTimeout(1,TimeUnit.DAYS).build();
+        Retrofit newRetrofit = retrofit.newBuilder().client(client).build();
+        IRetrofitService retrofitService = newRetrofit.create(IRetrofitService.class);
+        Call<ResponseBody> call = retrofitService.download(fileUrl);
+        addCall(tag,call);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                InputStream is = null;
+                byte[] buf = new byte[2048];
+                int len = 0;
+                FileOutputStream fos = null;
+                try {
+                    long total = response.body().contentLength();
+                    long current = 0;
+                    is = response.body().byteStream();
+                    fos = new FileOutputStream(file);
+                    while ((len = is.read(buf)) != -1) {
+                        current += len;
+                        fos.write(buf, 0, len);
+                        downloadCallback.onProgress(total,current);
+                    }
+                    fos.flush();
+                    downloadCallback.onSuccess((T)file);
+                } catch (IOException e) {
+                    Log.e(TAG, e.toString());
+                    if (file.exists()){
+                        file.delete();
+                    }
+                    downloadCallback.onError("下载异常");
+                } finally {
+                    removeCall(tag);
+                    try {
+                        if (is != null) {
+                            is.close();
+                        }
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                removeCall(tag);
+                downloadCallback.onError("下载失败");
             }
         });
     }
