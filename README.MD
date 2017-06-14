@@ -1,10 +1,11 @@
 EasyHttp 一个可扩展的Http框架
 ===
-一、使用
+一、 引入项目
 ---
-1、 引入项目
-compile 'com.liwy.easyhttp:easyhttp:1.0.2'<br/>
-2、 初始化
+compile 'com.liwy.easyhttp:easyhttp:1.0.2'
+
+二、 初始化
+---
 在Application里初始化如下：
 ```
 OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();
@@ -16,9 +17,11 @@ EasyHttp.getInstance().setHttpService(okHttpService);
 RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
 EasyHttp.getInstance().setHttpService(retrofitService);
 ```
-现实现了两种Http服务，分别是基于OkHttp和Retrofit。<br/>
-3、 使用<br/>
-get
+现实现了两种Http服务，分别是基于OkHttp和Retrofit。
+
+三、 使用
+---
+1、 get
 ```
         // 参数
         Map<String,Object> params = new HashMap<>();
@@ -40,7 +43,7 @@ get
                 .get();
 ```
 
-post
+2、post
 ```
         // 参数
         Map<String,Object> params = new HashMap<>();
@@ -65,6 +68,31 @@ post
 ```
 EasyHttp.getInstance().cancelHttp("update");
 ```
+
+3、下载
+```
+ EasyHttp.getBuilder()
+                .setFileUrl(url)
+                .setFileName(fileName)
+                .setFilePath(filePath)
+                .setDownloadCallback(new DownloadCallback<File>() {
+            @Override
+            public void onSuccess(File o) {
+                System.out.println("---->下载成功" + o.getAbsolutePath());
+            }
+
+            @Override
+            public void onError(String err) {
+                System.out.println("---->下载失败");
+            }
+
+            @Override
+            public void onProgress(long total, long current) {
+                System.out.println("---->total=" + total + ",current=" + current);
+            }
+        }).download();
+```
+
 更新日志
 ---
 1.0.3
@@ -82,4 +110,4 @@ EasyHttp.getInstance().cancelHttp("update");
 
 1.0.1
 ---
-1. 版本发布至Jcenter.
+1. 1.0.1版本发布至Jcenter.
