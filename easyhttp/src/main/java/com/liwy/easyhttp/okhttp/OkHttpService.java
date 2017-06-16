@@ -5,7 +5,9 @@ package com.liwy.easyhttp.okhttp;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.liwy.easyhttp.base.MainThread;
 import com.liwy.easyhttp.base.AbHttpService;
+import com.liwy.easyhttp.base.EasyFile;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -42,6 +46,7 @@ import static android.content.ContentValues.TAG;
 
 public class OkHttpService extends AbHttpService {
     public OkHttpClient okHttpClient;
+    private MainThread mainThread = new MainThread();
 
     public OkHttpService() {
 
@@ -74,36 +79,37 @@ public class OkHttpService extends AbHttpService {
             public void onFailure(Call call, final IOException e) {
                 System.out.println("okhttp service 失败了");
                 removeCall(tag);
-                Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
+                mainThread.execute(new Runnable() {
                     @Override
-                    public void run() throws Exception {
+                    public void run() {
                         if (errorCallback != null)errorCallback.error(e);
                     }
-                }).subscribe();
+                });
             }
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-                Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        removeCall(tag);
-                        if (successCallback != null){
-                            if (responseClass == String.class){
-                                successCallback.success((T)response.body().string());
-                            }else{
-                                successCallback.success((T) new Gson().fromJson(response.body().string(),responseClass));
+                    removeCall(tag);
+                    final String content = response.body().string();
+                    mainThread.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (successCallback != null){
+                                if (responseClass == String.class){
+                                    if (successCallback != null)
+                                        successCallback.success((T)content);
+                                }else{
+                                    if (successCallback != null) successCallback.success((T) new Gson().fromJson(content,responseClass));
+                                }
                             }
                         }
-
-                    }
-                }).subscribe();
+                    });
             }
         });
     }
 
 
-    private static final MediaType JSON=MediaType.parse("application/json;charset=utf-8");
+    private static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
 
     @Override
     public <T> void post(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
@@ -115,19 +121,82 @@ public class OkHttpService extends AbHttpService {
         addCall(tag,call);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(Call call, final IOException e) {
                 removeCall(tag);
                 if (call.isCanceled()){
 
                 }else{
-                    if (errorCallback != null)errorCallback.error(e);
+                    mainThread.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (errorCallback != null)errorCallback.error(e);
+                        }
+                    });
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, final Response response) throws IOException {
                 removeCall(tag);
-                if (successCallback != null)successCallback.success((T) response.body().string());
+                final String content = response.body().string();
+                mainThread.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (successCallback != null)successCallback.success((T) content);
+                    }
+                });
+
+            }
+        });
+    }
+
+    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback){
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        // add file
+        for (int i = 0; i <files.size() ; i++) {
+            EasyFile easyFile = files.get(i);
+            File f = easyFile.getFile();
+            MediaType mediaType = MediaType.parse(easyFile.getMediaType());
+            if (f!=null) {
+                if (easyFile.getFileName() == null || "".equals(easyFile.getFileName()))easyFile.setFileName(f.getName());
+                builder.addFormDataPart(easyFile.getRequestKey(), f.getName(), RequestBody.create(mediaType, f));
+            }
+        }
+        //add the form data
+        if (params != null && params.size() > 0){
+            Set<String> keys = params.keySet();
+            for (String key : keys){
+                builder.addFormDataPart(key,String.valueOf(params.get(key)));
+            }
+        }
+
+        MultipartBody requestBody = builder.build();
+        //构建请求
+        Request request = new Request.Builder()
+                .url(url)//地址
+                .post(requestBody)//添加请求体
+                .build();
+        // 上传文件耗时较大，需加长超时时间
+        okHttpClient.newBuilder().connectTimeout(1,TimeUnit.DAYS).readTimeout(1,TimeUnit.DAYS).writeTimeout(1,TimeUnit.DAYS).build().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                mainThread.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (errorCallback != null)errorCallback.error("upload error:e.getLocalizedMessage() = " + e.getLocalizedMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                final String content = response.body().string();
+                mainThread.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (successCallback != null)successCallback.success((T)content);
+                    }
+                });
             }
         });
     }
@@ -142,14 +211,19 @@ public class OkHttpService extends AbHttpService {
             return;
         }
         final Request request = new Request.Builder().addHeader("","1000").url(fileUrl).build();
+        // 下载文件耗时较大，需加长超时时间
         // set timeout for download task
         final Call call = okHttpClient.newBuilder().connectTimeout(1,TimeUnit.DAYS).readTimeout(1,TimeUnit.DAYS).writeTimeout(1,TimeUnit.DAYS).build().newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 removeCall(tag);
-                Log.e(TAG, e.toString());
-                downloadCallback.onError("下载失败");
+                mainThread.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (downloadCallback != null)downloadCallback.onError("download faied!");
+                    }
+                });
             }
 
             @Override
@@ -159,23 +233,42 @@ public class OkHttpService extends AbHttpService {
                 int len = 0;
                 FileOutputStream fos = null;
                 try {
-                    long total = response.body().contentLength();
+                    final long total = response.body().contentLength();
                     long current = 0;
                     is = response.body().byteStream();
                     fos = new FileOutputStream(file);
                     while ((len = is.read(buf)) != -1) {
                         current += len;
                         fos.write(buf, 0, len);
-                        downloadCallback.onProgress(total,current);
+                        final long finalCurrent = current;
+                        mainThread.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (downloadCallback != null)downloadCallback.onProgress(total, finalCurrent);
+                            }
+                        });
+
                     }
                     fos.flush();
-                    downloadCallback.onSuccess((T)file);
-                } catch (IOException e) {
+                    mainThread.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (downloadCallback != null)downloadCallback.onSuccess((T)file);
+                        }
+                    });
+
+                } catch (final IOException e) {
                     Log.e(TAG, e.toString());
                     if (file.exists()){
                         file.delete();
                     }
-                    downloadCallback.onError("下载异常");
+                    mainThread.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (downloadCallback != null)downloadCallback.onError("下载异常:" + e.toString());
+                        }
+                    });
+
                 } finally {
                     removeCall(tag);
                     try {

@@ -2,11 +2,13 @@ package com.liwy.easyhttp;
 
 import android.content.Context;
 
+import com.liwy.easyhttp.base.EasyFile;
 import com.liwy.easyhttp.base.IHttpService;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,6 +62,11 @@ public class EasyHttp implements IHttpService {
      */
     public <T> void post(String url, Map<String,Object> params,Object tag,SuccessCallback<T> successCallback,ErrorCallback errorCallback){
         if (httpService != null)httpService.post(url,params,tag,successCallback,errorCallback);
+    }
+
+    @Override
+    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, Object tag, SuccessCallback<T> successCallback, ErrorCallback errorCallback) {
+        if (httpService != null)httpService.postFile(url,params,files,tag,successCallback,errorCallback);
     }
 
     @Override

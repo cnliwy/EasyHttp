@@ -19,8 +19,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         // there are two implementions of IHttpService,you can initialize one which you want
-//        initOkHttpService();
-        initRetrofitService();
+        initOkHttpService();
+//        initRetrofitService();
     }
 
     /**
@@ -38,8 +38,8 @@ public class MyApplication extends Application {
      * initialize the EasyHttp with retrofitService
      */
     public void initRetrofitService(){
-//        RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
-        RetrofitService retrofitService = new RetrofitService().init("http://img5q.duitang.com/uploads/",5);
+        RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
+//        RetrofitService retrofitService = new RetrofitService().init("http://img5q.duitang.com/uploads/",5);
         EasyHttp.getInstance().setHttpService(retrofitService);
     }
 }
