@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -32,7 +28,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.R.attr.tag;
 import static android.content.ContentValues.TAG;
 
 /**
@@ -76,55 +71,6 @@ public class RetrofitService extends AbHttpService {
         return new RetrofitService(retrofitService,okHttpClient,retrofit);
     }
 
-    /**
-     *
-     * @param url
-     * @param params
-     * @param tag
-     * @param successCallback
-     * @param errorCallback
-     * @param <T>
-
-    @Override
-    public <T> void get(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
-        if (params == null) params = new HashMap<>();
-        final Class<T> responseClass = getResultParameterClass(successCallback);
-        Call<ResponseBody> call = retrofitService.get(url,params);
-        addCall(tag,call);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
-                removeCall(tag);
-                Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        if (successCallback != null){
-                            if (responseClass == String.class){
-                                successCallback.success((T)response.body().toString());
-                            }else{
-                                successCallback.success((T) new Gson().fromJson(response.body().toString(),responseClass));
-                            }
-                        }
-
-                    }
-                }).subscribe();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, final Throwable t) {
-                System.out.println("失败了哦");
-                removeCall(tag);
-                Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        if (errorCallback != null)errorCallback.error(t);
-                    }
-                }).subscribe();
-            }
-        });
-    }
-
-     */
     @Override
     public <T> void get(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         if (params == null) params = new HashMap<>();
@@ -135,9 +81,6 @@ public class RetrofitService extends AbHttpService {
             @Override
             public void onResponse(Call<JsonObject> call, final Response<JsonObject> response) {
                 removeCall(tag);
-//                Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
-//                    @Override
-//                    public void run() throws Exception {
                         if (successCallback != null){
                             if (responseClass == String.class){
                                 successCallback.success((T)response.body().toString());
@@ -145,21 +88,13 @@ public class RetrofitService extends AbHttpService {
                                 successCallback.success((T) new Gson().fromJson(response.body().toString(),responseClass));
                             }
                         }
-
-//                    }
-//                }).subscribe();
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, final Throwable t) {
                 System.out.println("失败了哦");
                 removeCall(tag);
-//                Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
-//                    @Override
-//                    public void run() throws Exception {
-                        if (errorCallback != null)errorCallback.error(t);
-//                    }
-//                }).subscribe();
+                if (errorCallback != null)errorCallback.error(t);
             }
         });
     }
@@ -173,9 +108,6 @@ public class RetrofitService extends AbHttpService {
             @Override
             public void onResponse(Call<JsonObject> call, final Response<JsonObject> response) {
                 removeCall(tag);
-//                Observable.empty().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnComplete(new Action() {
-//                    @Override
-//                    public void run() throws Exception {
                  if (successCallback != null && response != null){
                      if (responseClass == String.class){
                          successCallback.success((T)response.body());
@@ -183,9 +115,6 @@ public class RetrofitService extends AbHttpService {
                          successCallback.success((T) new Gson().fromJson(response.body(),responseClass));
                      }
                  }
-//
-//                    }
-//                }).subscribe();
             }
 
             @Override

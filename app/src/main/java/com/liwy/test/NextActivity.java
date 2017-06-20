@@ -130,9 +130,9 @@ public class NextActivity extends AppCompatActivity {
     public List<EasyFile> getFiles(){
         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/aliwy/";
         List<EasyFile> files = new ArrayList<>();
-        files.add(new EasyFile("file1",filePath + "guide_one.png","image/png",new File(filePath + "guide_one.png")));
+        files.add(new EasyFile("bgimg",filePath + "guide_one.png","image/png",new File(filePath + "guide_one.png")));
 //        files.add(new EasyFile("filw2",filePath + "guide_two.png","image/png",new File(filePath + "guide_two.png")));
-        files.add(new EasyFile("bgimg",filePath + "test1.apk","application/vnd.android.package-archive",new File(filePath + "test.apk")));
+        files.add(new EasyFile("fil2",filePath + "test1.apk","application/vnd.android.package-archive",new File(filePath + "test.apk")));
 //        files.add(new EasyFile("bgimg",filePath + "ic_launcher.png","image/png",new File(filePath + "ic_launcher.png")));
         return files;
     }

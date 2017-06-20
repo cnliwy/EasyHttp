@@ -1,13 +1,12 @@
 package com.liwy.easyhttp.okhttp;
 
 
-
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.liwy.easyhttp.base.MainThread;
 import com.liwy.easyhttp.base.AbHttpService;
 import com.liwy.easyhttp.base.EasyFile;
+import com.liwy.easyhttp.base.MainThread;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
@@ -24,10 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
