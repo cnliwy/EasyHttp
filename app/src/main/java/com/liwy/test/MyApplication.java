@@ -29,7 +29,7 @@ public class MyApplication extends Application {
      */
     public void initOkHttpService(){
         OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS).build();
-        OkHttpService okHttpService = new OkHttpService().init(okHttpClient);
+        OkHttpService okHttpService = new OkHttpService(okHttpClient);
         EasyHttp.getInstance().setHttpService(okHttpService);
     }
 

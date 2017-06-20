@@ -43,21 +43,10 @@ public class OkHttpService extends AbHttpService {
     public OkHttpClient okHttpClient;
     private MainThread mainThread = new MainThread();
 
-    public OkHttpService() {
-
+    public OkHttpService(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
     }
 
-    public OkHttpService init(OkHttpClient okHttpClient) {
-        OkHttpService okHttpService = new OkHttpService();
-        okHttpService.okHttpClient = okHttpClient;
-        if (okHttpClient == null)okHttpService = init();
-        return okHttpService;
-    }
-    public OkHttpService init() {
-        OkHttpService okHttpService = new OkHttpService();
-        okHttpService.okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();;
-        return okHttpService;
-    }
 
 
     @Override
