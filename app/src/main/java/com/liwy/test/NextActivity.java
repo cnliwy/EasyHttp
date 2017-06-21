@@ -7,12 +7,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.base.EasyFile;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.test.bean.Data;
 import com.liwy.test.bean.TestResult;
+import com.liwy.test.bean.UploadResponse;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,8 +70,8 @@ public class NextActivity extends AppCompatActivity {
             }
         }, new ErrorCallback() {
             @Override
-            public void error(Object... values) {
-                System.out.println(values[0].toString());
+            public void error(String errorMsg) {
+                System.out.println(errorMsg);
             }
         });
     }
@@ -112,26 +115,31 @@ public class NextActivity extends AppCompatActivity {
         params.put("uploadType","image and apk");
 
         List<EasyFile> files = getFiles();
-        EasyHttp.getInstance().postFile(url, params, files, "upload","", new SuccessCallback<String>() {
+
+        EasyHttp.getBuilder().setUrl(url).setParams(params).setFiles(files).setSuccessCallback(new SuccessCallback<String>() {
             @Override
             public void success(String result) {
+                List<Data> type = new ArrayList<Data>();
+                List<Data> list = new Gson().fromJson(result,type.getClass());
                 System.out.println("上传成功，" + result);
                 contentTv.setText("上传成功，" + result);
             }
-        }, new ErrorCallback() {
+        }).setErrorCallback(new ErrorCallback() {
             @Override
-            public void error(Object... values) {
-                System.out.println(values[0].toString());
-                contentTv.setText("上传失败"+ values[0].toString());
+            public void error(String errorMsg) {
+                System.out.println(errorMsg);
+                contentTv.setText("上传失败"+ errorMsg);
             }
-        });
+        }).postFile();
     }
+
+    // 需要上传的文件
     public List<EasyFile> getFiles(){
         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/aliwy/";
         List<EasyFile> files = new ArrayList<>();
-        files.add(new EasyFile("bgimg",filePath + "guide_one.png","image/png",new File(filePath + "guide_one.png")));
-//        files.add(new EasyFile("filw2",filePath + "guide_two.png","image/png",new File(filePath + "guide_two.png")));
-        files.add(new EasyFile("fil2",filePath + "test1.apk","application/vnd.android.package-archive",new File(filePath + "test.apk")));
+//        files.add(new EasyFile("fil2",filePath + "test1.apk","application/vnd.android.package-archive",new File(filePath + "test.apk")));
+        files.add(new EasyFile("image1",filePath + "guide_one.png","image/png",new File(filePath + "guide_one.png")));
+//        files.add(new EasyFile("image2",filePath + "guide_two.png","image/png",new File(filePath + "guide_two.png")));
 //        files.add(new EasyFile("bgimg",filePath + "ic_launcher.png","image/png",new File(filePath + "ic_launcher.png")));
         return files;
     }

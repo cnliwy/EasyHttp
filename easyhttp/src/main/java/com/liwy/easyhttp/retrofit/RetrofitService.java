@@ -81,23 +81,24 @@ public class RetrofitService extends AbHttpService {
             @Override
             public void onResponse(Call<JsonObject> call, final Response<JsonObject> response) {
                 removeCall(tag);
-                        if (successCallback != null){
-                            if (responseClass == String.class){
-                                successCallback.success((T)response.body().toString());
-                            }else{
-                                successCallback.success((T) new Gson().fromJson(response.body().toString(),responseClass));
-                            }
-                        }
+                if (successCallback != null){
+                    if (responseClass == String.class){
+                        successCallback.success((T)response.body().toString());
+                    }else{
+                        successCallback.success((T) new Gson().fromJson(response.body().toString(),responseClass));
+                    }
+                }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, final Throwable t) {
-                System.out.println("失败了哦");
                 removeCall(tag);
-                if (errorCallback != null)errorCallback.error(t);
+                if (errorCallback != null)errorCallback.error(t.getLocalizedMessage());
             }
         });
     }
+
+
     @Override
     public <T> void post(String url, Map<String, Object> params, final Object tag,String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         if (params == null) params = new HashMap<>();
@@ -123,7 +124,7 @@ public class RetrofitService extends AbHttpService {
 
                 }else{
                     removeCall(tag);
-                    if (errorCallback != null)errorCallback.error(t);
+                    if (errorCallback != null)errorCallback.error(t.getLocalizedMessage());
                 }
             }
         });

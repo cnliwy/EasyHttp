@@ -5,5 +5,5 @@ package com.liwy.easyhttp.callback;
  */
 
 public interface ErrorCallback {
-    public void error(Object... values);
+    public void error(String errorMsg);
 }

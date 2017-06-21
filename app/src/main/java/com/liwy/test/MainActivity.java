@@ -8,13 +8,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.liwy.easyhttp.EasyHttp;
-import com.liwy.easyhttp.callback.CallbackManager;
+import com.liwy.easyhttp.callback.DataParser;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.callback.SuccessListener;
+import com.liwy.test.bean.Data;
 import com.liwy.test.bean.LoginResponse;
 import com.liwy.test.bean.TestResult;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,22 +75,32 @@ public class MainActivity extends AppCompatActivity {
      * setUrl("http://192.168.131.192:8886/login/update")
      */
     public void getGSONData(){
+        List<Data> type = new ArrayList<Data>();
+        System.out.println("集合：" + type.getClass());
         // 参数
         Map<String,Object> params = new HashMap<>();
         params.put("ver","1");
         EasyHttp.getBuilder()
 //                .setUrl("/login/update")
-                .setUrl("http://192.168.131.19:8886/login/update")
+                .setUrl("http://192.168.131.19:8886/login/datatest")
                 .setTag("get")
                 .setParams(params)
-                .setSuccessCallback(new SuccessCallback<TestResult>() {
+                .setSuccessCallback(new SuccessCallback<List<Data>>() {
                     @Override
-                    public void success(TestResult result) {
-                        contentTv.setText("get = " + result.toString());
-                    }})
+                    public void success(List<Data> result) {
+                        System.out.println(result.toString());
+                        contentTv.setText("get = " + result.get(2).toString());
+                    }
+                })
+//                .setSuccessCallback(new SuccessCallback<List<Data>>() {
+//                    @Override
+//                    public void success(List<Data> result) {
+//                        System.out.println(result.toString());
+//                        contentTv.setText("get = " + result.get(2).toString());
+//                    }})
                 .setErrorCallback(new ErrorCallback() {
                     @Override
-                    public void error(Object... values) {
+                    public void error(String errorMsg) {
                         contentTv.setText("请求失败");
                     }})
                 .get();
@@ -104,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         EasyHttp.getBuilder()
                 .setUrl("http://122.224.205.147:8008/GCPServer.asmx/DeviceLogin")
                 .setParams(params)
-                .setParseType(CallbackManager.PARSE_XML)
+                .setParseType(DataParser.PARSE_XML)
                 .setSuccessCallback(new SuccessCallback<LoginResponse>() {
                     @Override
                     public void success(LoginResponse result) {
@@ -112,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                     }})
                 .setErrorCallback(new ErrorCallback() {
                     @Override
-                    public void error(Object... values) {
+                    public void error(String errorMsg) {
                         contentTv.setText("请求失败");
                     }})
                 .get();
@@ -137,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     }})
                 .setErrorCallback(new ErrorCallback() {
                     @Override
-                    public void error(Object... values) {
+                    public void error(String errorMsg) {
                         contentTv.setText("请求失败");
                         System.out.println("请求失败");
                     }})

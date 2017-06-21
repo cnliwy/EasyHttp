@@ -8,52 +8,28 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.3'
 ---
 在Application里初始化,主要初始化内容为统一解析回调和IHttpService实现类传入，具体如下：
 ```
- // 添加GSON解析
-        CallbackManager.addCallback(CallbackManager.PARSE_GSON,new Callback() {
-            @Override
-            public void onSuccess(String result,Class<?> responseClass, SuccessCallback successCallback) {
-                if (successCallback != null){
-                    if (responseClass == String.class){
-                        if (successCallback != null)
-                            successCallback.success(result);
-                    }else{
-                        if (successCallback != null) successCallback.success( new Gson().fromJson(result,responseClass));
-                    }
-                }
-            }
-
-            @Override
-            public void onError(String error, ErrorCallback errorCallback) {
-                if (errorCallback != null)errorCallback.error(error);
-            }
-        });
-        // 添加xml解析
-        CallbackManager.addCallback(CallbackManager.PARSE_XML, new Callback() {
-            @Override
-            public void onSuccess(String result, Class<?> responseClass, SuccessCallback successCallback) {
-                if (successCallback != null){
-                    if (responseClass == String.class){
-                        if (successCallback != null)
-                            successCallback.success(result);
-                    }else{
-                        if (successCallback != null) successCallback.success(getXMLObject(convertToEcrfContent(result),responseClass));
-                    }
-                }
-            }
-
-            @Override
-            public void onError(String error, ErrorCallback errorCallback) {
-                if (errorCallback != null)errorCallback.error(error);
-            }
-        });
-OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();
-OkHttpService okHttpService = new OkHttpService().init(okHttpClient);
-EasyHttp.getInstance().setHttpService(okHttpService);
+         // 设置默认解析方式（已实现gson和xml的数据解析）
+         DataParser.setDefaultParseType(DataParser.PARSE_GSON);
+         // 也可以自定义解析方式，比如解析html类型的数据
+         DataParser.addCallback("html", new Callback() {
+             @Override
+             public void onSuccess(String result, Class<?> clazz, SuccessCallback successCallback) {
+                 // do parsing which you want to
+             }
+ 
+             @Override
+             public void onError(String error, ErrorCallback errorCallback) {
+                 // http error
+             }
+         });
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();
+        OkHttpService okHttpService = new OkHttpService().init(okHttpClient);
+        EasyHttp.getInstance().setHttpService(okHttpService);
 ```
 或者
 ```
-RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
-EasyHttp.getInstance().setHttpService(retrofitService);
+        RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
+        EasyHttp.getInstance().setHttpService(retrofitService);
 ```
 现实现了两种Http服务，分别是基于OkHttp和Retrofit，其中基于Retrofit的实现RetrofitService尚待完善。
 
@@ -102,9 +78,10 @@ EasyHttp.getInstance().setHttpService(retrofitService);
                     }})
                 .post();
 ```
+
 如果需要在请求过程中取消该请求，可以如下操作：
 ```
-EasyHttp.getInstance().cancelHttp("update");
+    EasyHttp.getInstance().cancelHttp("update");
 ```
 
 3、下载
@@ -114,26 +91,54 @@ EasyHttp.getInstance().cancelHttp("update");
                 .setFileName(fileName)
                 .setFilePath(filePath)
                 .setDownloadCallback(new DownloadCallback<File>() {
-            @Override
-            public void onSuccess(File o) {
-                System.out.println("---->下载成功" + o.getAbsolutePath());
-            }
+                    @Override
+                    public void onSuccess(File o) {
+                        System.out.println("---->下载成功" + o.getAbsolutePath());
+                    }
 
-            @Override
-            public void onError(String err) {
-                System.out.println("---->下载失败");
-            }
+                    @Override
+                    public void onError(String err) {
+                        System.out.println("---->下载失败");
+                    }
 
-            @Override
-            public void onProgress(long total, long current) {
-                System.out.println("---->total=" + total + ",current=" + current);
-            }
-        }).download();
+                    @Override
+                    public void onProgress(long total, long current) {
+                        System.out.println("---->total=" + total + ",current=" + current);
+                    }
+            }).download();
 ```
 
 4、上传
 ```
+        // 参数
+        Map<String,Object> params = new HashMap<>();
+        params.put("title","upload head icon and apk");
+        params.put("uploadUser","cnliwy");
+        params.put("uploadType","image and apk");
+        
+        List<EasyFile> files = getFiles();
 
+        EasyHttp.getBuilder().setUrl(url).setParams(params).setFiles(files).setSuccessCallback(new SuccessCallback() {
+            @Override
+            public void success(Object result) {
+                System.out.println("上传成功，" + result);
+                contentTv.setText("上传成功，" + result);
+            }
+        }).setErrorCallback(new ErrorCallback() {
+            @Override
+            public void error(Object... values) {
+                System.out.println(values[0].toString());
+                contentTv.setText("上传失败"+ values[0].toString());
+            }
+        }).postFile();
+        // 需要上传的文件
+        public List<EasyFile> getFiles(){
+                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/aliwy/";
+                List<EasyFile> files = new ArrayList<>();
+                files.add(new EasyFile("image1",filePath + "guide_one.png","image/png",new File(filePath + "guide_one.png")));
+                files.add(new EasyFile("image2",filePath + "guide_two.png","image/png",new File(filePath + "guide_two.png")));
+                return files;
+         }
 ```
 
 更新日志

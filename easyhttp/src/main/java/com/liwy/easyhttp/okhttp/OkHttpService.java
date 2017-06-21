@@ -3,10 +3,13 @@ package com.liwy.easyhttp.okhttp;
 
 import android.util.Log;
 
+import com.liwy.easyhttp.DataParse.ReqClassUtils;
+import com.liwy.easyhttp.DataParse.TypeInfo;
+import com.liwy.easyhttp.DataParse.TypeUtils;
 import com.liwy.easyhttp.base.AbHttpService;
 import com.liwy.easyhttp.base.EasyFile;
 import com.liwy.easyhttp.base.MainThread;
-import com.liwy.easyhttp.callback.CallbackManager;
+import com.liwy.easyhttp.callback.DataParser;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
@@ -18,7 +21,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,7 +54,11 @@ public class OkHttpService extends AbHttpService {
 
     @Override
     public <T> void get(String url, Map<String, Object> params, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
-        final Class<T> responseClass = getResultParameterClass(successCallback);
+//        final Class<T> responseClass = getResultParameterClass(successCallback);
+//        System.out.println(successCallback.getClass().getComponentType());
+//        TypeInfo typeInfo = ReqClassUtils.getCallbackGenericType(successCallback.getClass());
+//        final Class<?> responseClass = TypeUtils.getResponseClass(typeInfo);
+        final Class<?> responseClass = successCallback.rawType;
         System.out.println(responseClass.getName());
         String realUrl = makeGetUrl(url,params);//generate get url
 
@@ -69,8 +75,8 @@ public class OkHttpService extends AbHttpService {
                     public void run() {
                         String type = "";
                         if (parseType != null && !"".equals(parseType))type = parseType;
-                        else type = CallbackManager.getDefaultParseType();
-                        CallbackManager.getCallbackMap().get(type).onError(e.toString(),errorCallback);
+                        else type = DataParser.getDefaultParseType();
+                        DataParser.getCallbackMap().get(type).onError(e.toString(),errorCallback);
                     }
                 });
             }
@@ -84,8 +90,8 @@ public class OkHttpService extends AbHttpService {
                         public void run() {
                             String type = "";
                             if (parseType != null && !"".equals(parseType))type = parseType;
-                            else type = CallbackManager.getDefaultParseType();
-                            CallbackManager.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
+                            else type = DataParser.getDefaultParseType();
+                            DataParser.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
 //                            if (successCallback != null){
 //                                if (responseClass == String.class){
 //                                    if (successCallback != null)
@@ -122,8 +128,8 @@ public class OkHttpService extends AbHttpService {
                         public void run() {
                             String type = "";
                             if (parseType != null && !"".equals(parseType))type = parseType;
-                            else type = CallbackManager.getDefaultParseType();
-                            CallbackManager.getCallbackMap().get(type).onError(e.toString(),errorCallback);
+                            else type = DataParser.getDefaultParseType();
+                            DataParser.getCallbackMap().get(type).onError(e.toString(),errorCallback);
 //                            if (errorCallback != null)errorCallback.error(e);
                         }
                     });
@@ -139,8 +145,8 @@ public class OkHttpService extends AbHttpService {
                     public void run() {
                         String type = "";
                         if (parseType != null && !"".equals(parseType))type = parseType;
-                        else type = CallbackManager.getDefaultParseType();
-                        CallbackManager.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
+                        else type = DataParser.getDefaultParseType();
+                        DataParser.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
 //                        if (successCallback != null)successCallback.success((T) content);
                     }
                 });
@@ -151,6 +157,7 @@ public class OkHttpService extends AbHttpService {
 
     public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback){
         final Class<T> responseClass = getResultParameterClass(successCallback);
+
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         // add file
         for (int i = 0; i <files.size() ; i++) {
@@ -185,9 +192,8 @@ public class OkHttpService extends AbHttpService {
                     public void run() {
                         String type = "";
                         if (parseType != null && !"".equals(parseType))type = parseType;
-                        else type = CallbackManager.getDefaultParseType();
-                        CallbackManager.getCallbackMap().get(type).onError(e.toString(),errorCallback);
-//                        if (errorCallback != null)errorCallback.error("upload error:e.getLocalizedMessage() = " + e.getLocalizedMessage());
+                        else type = DataParser.getDefaultParseType();
+                        DataParser.getCallbackMap().get(type).onError(e.toString(),errorCallback);
                     }
                 });
             }
@@ -200,9 +206,8 @@ public class OkHttpService extends AbHttpService {
                     public void run() {
                         String type = "";
                         if (parseType != null && !"".equals(parseType))type = parseType;
-                        else type = CallbackManager.getDefaultParseType();
-                        CallbackManager.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
-//                        if (successCallback != null)successCallback.success((T)content);
+                        else type = DataParser.getDefaultParseType();
+                        DataParser.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
                     }
                 });
             }
