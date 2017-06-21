@@ -6,8 +6,46 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.3'
 
 二、 初始化
 ---
-在Application里初始化如下：
+在Application里初始化,主要初始化内容为统一解析回调和IHttpService实现类传入，具体如下：
 ```
+ // 添加GSON解析
+        CallbackManager.addCallback(CallbackManager.PARSE_GSON,new Callback() {
+            @Override
+            public void onSuccess(String result,Class<?> responseClass, SuccessCallback successCallback) {
+                if (successCallback != null){
+                    if (responseClass == String.class){
+                        if (successCallback != null)
+                            successCallback.success(result);
+                    }else{
+                        if (successCallback != null) successCallback.success( new Gson().fromJson(result,responseClass));
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String error, ErrorCallback errorCallback) {
+                if (errorCallback != null)errorCallback.error(error);
+            }
+        });
+        // 添加xml解析
+        CallbackManager.addCallback(CallbackManager.PARSE_XML, new Callback() {
+            @Override
+            public void onSuccess(String result, Class<?> responseClass, SuccessCallback successCallback) {
+                if (successCallback != null){
+                    if (responseClass == String.class){
+                        if (successCallback != null)
+                            successCallback.success(result);
+                    }else{
+                        if (successCallback != null) successCallback.success(getXMLObject(convertToEcrfContent(result),responseClass));
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String error, ErrorCallback errorCallback) {
+                if (errorCallback != null)errorCallback.error(error);
+            }
+        });
 OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();
 OkHttpService okHttpService = new OkHttpService().init(okHttpClient);
 EasyHttp.getInstance().setHttpService(okHttpService);
@@ -17,7 +55,7 @@ EasyHttp.getInstance().setHttpService(okHttpService);
 RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
 EasyHttp.getInstance().setHttpService(retrofitService);
 ```
-现实现了两种Http服务，分别是基于OkHttp和Retrofit。
+现实现了两种Http服务，分别是基于OkHttp和Retrofit，其中基于Retrofit的实现RetrofitService尚待完善。
 
 三、 使用
 ---
