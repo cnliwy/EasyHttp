@@ -1,5 +1,6 @@
 package com.liwy.test;
 
+import com.liwy.test.bean.TestResult;
 import com.liwy.test.callback.SuccessCallback;
 
 import org.junit.Test;

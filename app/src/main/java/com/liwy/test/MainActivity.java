@@ -2,35 +2,26 @@ package com.liwy.test;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.liwy.easyhttp.EasyHttp;
-import com.liwy.easyhttp.base.EasyFile;
-import com.liwy.easyhttp.callback.DownloadCallback;
+import com.liwy.easyhttp.callback.CallbackManager;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
-import com.liwy.easyhttp.okhttp.OkHttpService;
+import com.liwy.test.bean.LoginResponse;
+import com.liwy.test.bean.TestResult;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-
-import static android.os.Build.VERSION_CODES.N;
-import static android.os.Environment.getExternalStorageDirectory;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     TextView contentTv;
-    Button getBtn;
+    Button getGSONBtn;
+    Button getXMLBtn;
     Button postBtn;
     Button nextBtn;
 
@@ -38,14 +29,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getBtn = (Button)findViewById(R.id.btn_get);
+        getGSONBtn = (Button)findViewById(R.id.btn_get_gson);
+        getXMLBtn = (Button)findViewById(R.id.btn_get_xml);
         postBtn = (Button)findViewById(R.id.btn_post);
         nextBtn = (Button)findViewById(R.id.btn_next);
-        getBtn.setOnClickListener(new View.OnClickListener() {
+        getGSONBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                get();
+                getGSONData();
             }
+
+        });
+        getXMLBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getXMLData();
+            }
+
         });
         postBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
      * if OkHttpService
      * setUrl("http://192.168.131.192:8886/login/update")
      */
-    public void get(){
+    public void getGSONData(){
         // 参数
         Map<String,Object> params = new HashMap<>();
         params.put("ver","1");
@@ -79,10 +79,36 @@ public class MainActivity extends AppCompatActivity {
                 .setUrl("http://192.168.131.19:8886/login/update")
                 .setTag("get")
                 .setParams(params)
-                .setSuccessCallback(new SuccessCallback<String>() {
+                .setSuccessCallback(new SuccessCallback<TestResult>() {
                     @Override
-                    public void success(String result) {
-                        contentTv.setText("get = " + result);
+                    public void success(TestResult result) {
+                        contentTv.setText("get = " + result.toString());
+                    }})
+                .setErrorCallback(new ErrorCallback() {
+                    @Override
+                    public void error(Object... values) {
+                        contentTv.setText("请求失败");
+                    }})
+                .get();
+    }
+
+    /**
+     * the get request which parse xml data
+     */
+    public void getXMLData(){
+        // 参数
+        Map<String,Object> params = new HashMap<>();
+        params.put("deviceNumber","52fb15e9-c0e7-30fd-b66e-fc9e8b834b0a");
+        params.put("devicePin","a123456a");
+
+        EasyHttp.getBuilder()
+                .setUrl("http://122.224.205.147:8008/GCPServer.asmx/DeviceLogin")
+                .setParams(params)
+                .setParseType(CallbackManager.PARSE_XML)
+                .setSuccessCallback(new SuccessCallback<LoginResponse>() {
+                    @Override
+                    public void success(LoginResponse result) {
+                        contentTv.setText("get = " + result.toString());
                     }})
                 .setErrorCallback(new ErrorCallback() {
                     @Override

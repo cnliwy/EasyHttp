@@ -1,4 +1,4 @@
-package com.liwy.test;
+package com.liwy.test.bean;
 
 import com.google.gson.annotations.SerializedName;
 

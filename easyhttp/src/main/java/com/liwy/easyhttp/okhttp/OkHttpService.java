@@ -3,10 +3,10 @@ package com.liwy.easyhttp.okhttp;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.liwy.easyhttp.base.AbHttpService;
 import com.liwy.easyhttp.base.EasyFile;
 import com.liwy.easyhttp.base.MainThread;
+import com.liwy.easyhttp.callback.CallbackManager;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class OkHttpService extends AbHttpService {
 
 
     @Override
-    public <T> void get(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+    public <T> void get(String url, Map<String, Object> params, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         final Class<T> responseClass = getResultParameterClass(successCallback);
         System.out.println(responseClass.getName());
         String realUrl = makeGetUrl(url,params);//generate get url
@@ -66,7 +67,10 @@ public class OkHttpService extends AbHttpService {
                 mainThread.execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (errorCallback != null)errorCallback.error(e);
+                        String type = "";
+                        if (parseType != null && !"".equals(parseType))type = parseType;
+                        else type = CallbackManager.getDefaultParseType();
+                        CallbackManager.getCallbackMap().get(type).onError(e.toString(),errorCallback);
                     }
                 });
             }
@@ -78,14 +82,18 @@ public class OkHttpService extends AbHttpService {
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (successCallback != null){
-                                if (responseClass == String.class){
-                                    if (successCallback != null)
-                                        successCallback.success((T)content);
-                                }else{
-                                    if (successCallback != null) successCallback.success((T) new Gson().fromJson(content,responseClass));
-                                }
-                            }
+                            String type = "";
+                            if (parseType != null && !"".equals(parseType))type = parseType;
+                            else type = CallbackManager.getDefaultParseType();
+                            CallbackManager.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
+//                            if (successCallback != null){
+//                                if (responseClass == String.class){
+//                                    if (successCallback != null)
+//                                        successCallback.success((T)content);
+//                                }else{
+//                                    if (successCallback != null) successCallback.success((T) new Gson().fromJson(content,responseClass));
+//                                }
+//                            }
                         }
                     });
             }
@@ -96,7 +104,8 @@ public class OkHttpService extends AbHttpService {
     private static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
 
     @Override
-    public <T> void post(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+    public <T> void post(String url, Map<String, Object> params, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+        final Class<T> responseClass = getResultParameterClass(successCallback);
         String content = map2json(params);
         RequestBody formBody = RequestBody.create(JSON,content);
 
@@ -107,13 +116,15 @@ public class OkHttpService extends AbHttpService {
             @Override
             public void onFailure(Call call, final IOException e) {
                 removeCall(tag);
-                if (call.isCanceled()){
-
-                }else{
+                if (!call.isCanceled()){
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (errorCallback != null)errorCallback.error(e);
+                            String type = "";
+                            if (parseType != null && !"".equals(parseType))type = parseType;
+                            else type = CallbackManager.getDefaultParseType();
+                            CallbackManager.getCallbackMap().get(type).onError(e.toString(),errorCallback);
+//                            if (errorCallback != null)errorCallback.error(e);
                         }
                     });
                 }
@@ -126,7 +137,11 @@ public class OkHttpService extends AbHttpService {
                 mainThread.execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (successCallback != null)successCallback.success((T) content);
+                        String type = "";
+                        if (parseType != null && !"".equals(parseType))type = parseType;
+                        else type = CallbackManager.getDefaultParseType();
+                        CallbackManager.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
+//                        if (successCallback != null)successCallback.success((T) content);
                     }
                 });
 
@@ -134,7 +149,8 @@ public class OkHttpService extends AbHttpService {
         });
     }
 
-    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback){
+    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback){
+        final Class<T> responseClass = getResultParameterClass(successCallback);
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         // add file
         for (int i = 0; i <files.size() ; i++) {
@@ -167,7 +183,11 @@ public class OkHttpService extends AbHttpService {
                 mainThread.execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (errorCallback != null)errorCallback.error("upload error:e.getLocalizedMessage() = " + e.getLocalizedMessage());
+                        String type = "";
+                        if (parseType != null && !"".equals(parseType))type = parseType;
+                        else type = CallbackManager.getDefaultParseType();
+                        CallbackManager.getCallbackMap().get(type).onError(e.toString(),errorCallback);
+//                        if (errorCallback != null)errorCallback.error("upload error:e.getLocalizedMessage() = " + e.getLocalizedMessage());
                     }
                 });
             }
@@ -178,7 +198,11 @@ public class OkHttpService extends AbHttpService {
                 mainThread.execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (successCallback != null)successCallback.success((T)content);
+                        String type = "";
+                        if (parseType != null && !"".equals(parseType))type = parseType;
+                        else type = CallbackManager.getDefaultParseType();
+                        CallbackManager.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
+//                        if (successCallback != null)successCallback.success((T)content);
                     }
                 });
             }

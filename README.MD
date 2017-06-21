@@ -93,12 +93,18 @@ EasyHttp.getInstance().cancelHttp("update");
         }).download();
 ```
 
+4、上传
+```
+
+```
+
 更新日志
 ---
 1.0.4(下版本)
 ---
 1. 新增文件上传功能(OkHttpService已实现)
 2. OkHttpService实现主线程回调
+3. 新增可扩展数据解析回调，默认GSON解析
 
 1.0.3
 ---

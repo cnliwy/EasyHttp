@@ -72,7 +72,7 @@ public class RetrofitService extends AbHttpService {
     }
 
     @Override
-    public <T> void get(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+    public <T> void get(String url, Map<String, Object> params, final Object tag,String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         if (params == null) params = new HashMap<>();
         final Class<T> responseClass = getResultParameterClass(successCallback);
         Call<JsonObject> call = retrofitService.get(url,params);
@@ -99,7 +99,7 @@ public class RetrofitService extends AbHttpService {
         });
     }
     @Override
-    public <T> void post(String url, Map<String, Object> params, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+    public <T> void post(String url, Map<String, Object> params, final Object tag,String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         if (params == null) params = new HashMap<>();
         final Class<T> responseClass = getResultParameterClass(successCallback);
         Call<JsonObject> call = retrofitService.post(url,params);
@@ -130,7 +130,7 @@ public class RetrofitService extends AbHttpService {
     }
 
     @Override
-    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, Object tag, SuccessCallback<T> successCallback, ErrorCallback errorCallback) {
+    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, Object tag,String parseType, SuccessCallback<T> successCallback, ErrorCallback errorCallback) {
 
     }
 

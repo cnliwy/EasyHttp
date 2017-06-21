@@ -50,8 +50,8 @@ public class EasyHttp implements IHttpService {
      * @param url
      * @param params
      */
-    public <T> void get(String url, Map<String,Object> params,Object tag, SuccessCallback<T> successCallback, ErrorCallback errorCallback){
-        if (httpService != null)httpService.get(url,params,tag,successCallback,errorCallback);
+    public <T> void get(String url, Map<String,Object> params,Object tag,String parseType, SuccessCallback<T> successCallback, ErrorCallback errorCallback){
+        if (httpService != null)httpService.get(url,params,tag,parseType,successCallback,errorCallback);
     }
 
 
@@ -60,13 +60,13 @@ public class EasyHttp implements IHttpService {
      * @param url
      * @param params
      */
-    public <T> void post(String url, Map<String,Object> params,Object tag,SuccessCallback<T> successCallback,ErrorCallback errorCallback){
-        if (httpService != null)httpService.post(url,params,tag,successCallback,errorCallback);
+    public <T> void post(String url, Map<String,Object> params,Object tag,String parseType, SuccessCallback<T> successCallback,ErrorCallback errorCallback){
+        if (httpService != null)httpService.post(url,params,tag,parseType,successCallback,errorCallback);
     }
 
     @Override
-    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, Object tag, SuccessCallback<T> successCallback, ErrorCallback errorCallback) {
-        if (httpService != null)httpService.postFile(url,params,files,tag,successCallback,errorCallback);
+    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, Object tag,String parseType,  SuccessCallback<T> successCallback, ErrorCallback errorCallback) {
+        if (httpService != null)httpService.postFile(url,params,files,tag,parseType,successCallback,errorCallback);
     }
 
     @Override
@@ -107,17 +107,22 @@ public class EasyHttp implements IHttpService {
         private String fileUrl;     // download url
         private String filePath;
         private String fileName;
+        private String parseType;
+        private List<EasyFile> files;
         private Map<String,Object> params;
         private SuccessCallback successCallback;
         private ErrorCallback errorCallback;
         private DownloadCallback downloadCallback;
 
         public void get(){
-            EasyHttp.getInstance().get(url,params,tag,successCallback,errorCallback);
+            EasyHttp.getInstance().get(url,params,tag,parseType,successCallback,errorCallback);
         }
 
         public void post(){
-            EasyHttp.getInstance().post(url,params,tag,successCallback,errorCallback);
+            EasyHttp.getInstance().post(url,params,tag,parseType,successCallback,errorCallback);
+        }
+        public void postFile(){
+            EasyHttp.getInstance().postFile(url,params,files,tag,parseType,successCallback,errorCallback);
         }
         public void download(){
             EasyHttp.getInstance().download(fileUrl,filePath,fileName,tag,downloadCallback);
@@ -165,6 +170,16 @@ public class EasyHttp implements IHttpService {
 
         public Builder setFilePath(String filePath) {
             this.filePath = filePath;
+            return this;
+        }
+
+        public Builder setParseType(String parseType) {
+            this.parseType = parseType;
+            return this;
+        }
+
+        public Builder setFiles(List<EasyFile> files) {
+            this.files = files;
             return this;
         }
     }

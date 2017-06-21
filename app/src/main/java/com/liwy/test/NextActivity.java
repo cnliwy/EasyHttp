@@ -1,6 +1,5 @@
 package com.liwy.test;
 
-import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +12,7 @@ import com.liwy.easyhttp.base.EasyFile;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
-import com.liwy.easyhttp.retrofit.RetrofitService;
+import com.liwy.test.bean.TestResult;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class NextActivity extends AppCompatActivity {
     public void get(){
         Map<String,Object> params = new HashMap<>();
         params.put("ver","1");
-        EasyHttp.getInstance().get("/login/update", params,"update", new SuccessCallback<TestResult>() {
+        EasyHttp.getInstance().get("/login/update", params,"update","", new SuccessCallback<TestResult>() {
             @Override
             public void success(TestResult result) {
 //                    JSONObject jsonObject = new JSONObject(result);
@@ -113,7 +112,7 @@ public class NextActivity extends AppCompatActivity {
         params.put("uploadType","image and apk");
 
         List<EasyFile> files = getFiles();
-        EasyHttp.getInstance().postFile(url, params, files, "upload", new SuccessCallback<String>() {
+        EasyHttp.getInstance().postFile(url, params, files, "upload","", new SuccessCallback<String>() {
             @Override
             public void success(String result) {
                 System.out.println("上传成功，" + result);

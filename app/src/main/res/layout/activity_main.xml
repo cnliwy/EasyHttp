@@ -17,14 +17,26 @@
         android:layout_marginTop="20dp"
         />
     <Button
-        android:id="@+id/btn_get"
+        android:id="@+id/btn_get_xml"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="@color/colorPrimary"
         android:textColor="#ffffff"
-        android:text="get"
+        android:text="get(XML)"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:id="@+id/btn_get_gson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/colorPrimary"
+        android:textColor="#ffffff"
+        android:text="get(GSON)"
         android:layout_marginTop="20dp"
         />
 

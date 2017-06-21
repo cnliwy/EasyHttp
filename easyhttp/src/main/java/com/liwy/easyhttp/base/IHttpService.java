@@ -13,15 +13,17 @@ import java.util.Map;
  */
 
 public interface IHttpService {
+
     /**
      * get method
      * @param url
      * @param params
      * @param tag
+     * @param parseType  PARSE_GSON  PARSE_XML
      * @param successCallback
      * @param errorCallback
      */
-    public <T> void get(String url, Map<String, Object> params,Object tag, SuccessCallback<T> successCallback, ErrorCallback errorCallback);
+    public <T> void get(String url, Map<String, Object> params,Object tag,String parseType, SuccessCallback<T> successCallback, ErrorCallback errorCallback);
 
     /**
      * post method
@@ -31,7 +33,7 @@ public interface IHttpService {
      * @param successCallback
      * @param errorCallback
      */
-    public <T> void post(String url, Map<String, Object> params,Object tag,  SuccessCallback<T> successCallback, ErrorCallback errorCallback);
+    public <T> void post(String url, Map<String, Object> params,Object tag, String parseType, SuccessCallback<T> successCallback, ErrorCallback errorCallback);
 
     /**
      * upload files
@@ -43,7 +45,7 @@ public interface IHttpService {
      * @param errorCallback
      * @param <T>
      */
-    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback);
+    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, String parseType,final SuccessCallback<T> successCallback, final ErrorCallback errorCallback);
 
 
     /**
