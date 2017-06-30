@@ -43,6 +43,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.5'
         new EasyHttp.Builder()
                 .setUrl("/login/update")
                 .setTag("update")
+                .setParseType(DataParser.PARSE_GSON)    // 设置数据的解析方式为GSON 也可为DataParser.PARSE_XML
                 .setParams(params)
                 .setSuccessCallback(new SuccessCallback<String>() {
                     @Override
@@ -64,6 +65,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.5'
         params.put("ver","1");
         new EasyHttp.Builder()
                 .setUrl("/login/update")
+                .setParseType(DataParser.PARSE_GSON)    // 设置数据的解析方式为GSON
                 .setTag("update")   //请求的tag，可用于中断请求
                 .setParams(params)
                 .setSuccessCallback(new SuccessCallback<String>() {

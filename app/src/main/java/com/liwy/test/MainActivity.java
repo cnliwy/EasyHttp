@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         params.put("devicePin","a123456a");
 
         EasyHttp.getBuilder()
-                .setUrl("http://122.224.205.147:8008/GCPServer.asmx/DeviceLogin")
+                .setUrl("http://192.168.1.147:8008/GCPServer.asmx/DeviceLogin")
                 .setParams(params)
                 .setParseType(DataParser.PARSE_XML)
                 .setSuccessCallback(new SuccessCallback<LoginResponse>() {
