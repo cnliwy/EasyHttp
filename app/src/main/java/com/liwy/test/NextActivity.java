@@ -1,8 +1,8 @@
 package com.liwy.test;
 
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,7 +15,6 @@ import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.test.bean.Data;
 import com.liwy.test.bean.TestResult;
-import com.liwy.test.bean.UploadResponse;
 
 import java.io.File;
 import java.util.ArrayList;

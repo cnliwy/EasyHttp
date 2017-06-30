@@ -32,9 +32,7 @@ dependencies {
         exclude group: 'stax', module: 'stax'
     }
     compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     testCompile 'junit:junit:4.12'
 }
 apply from: '/bintray.gradle'

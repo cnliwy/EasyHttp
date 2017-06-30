@@ -11,10 +11,8 @@ import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.callback.DataParser;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
-import com.liwy.easyhttp.callback.SuccessListener;
 import com.liwy.test.bean.Data;
 import com.liwy.test.bean.LoginResponse;
-import com.liwy.test.bean.TestResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
