@@ -1,9 +1,7 @@
 package com.liwy.test;
 
 import android.app.Application;
-import android.util.Xml;
 
-import com.google.gson.Gson;
 import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.callback.Callback;
 import com.liwy.easyhttp.callback.DataParser;
@@ -12,21 +10,9 @@ import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.easyhttp.okhttp.OkHttpService;
 import com.liwy.easyhttp.retrofit.RetrofitService;
 
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.convert.AnnotationStrategy;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.Strategy;
-import org.xmlpull.v1.XmlPullParser;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-
-import static com.liwy.easyhttp.callback.DataParser.convertToEcrfContent;
-import static com.liwy.easyhttp.callback.DataParser.getXMLObject;
 
 /**
  * Created by liwy on 2017/6/12.
