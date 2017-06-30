@@ -2,7 +2,7 @@ EasyHttp 一个可扩展的Http框架
 ===
 一、 引入项目
 ---
-compile 'com.liwy.easyhttp:easyhttp:1.0.3'
+compile 'com.liwy.easyhttp:easyhttp:1.0.5'
 
 二、 初始化
 ---
@@ -143,7 +143,12 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.3'
 
 更新日志
 ---
-1.0.4(下版本)
+1.0.5（最新）
+---
+1. 源码分为两个分支，其中release为发布版分支
+2. 清理release分支下retrofit的实现及依赖包
+
+1.0.4
 ---
 1. 新增文件上传功能(OkHttpService已实现)
 2. OkHttpService实现主线程回调
