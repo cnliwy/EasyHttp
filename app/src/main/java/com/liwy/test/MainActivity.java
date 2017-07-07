@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.liwy.easyhttp.EasyHttp;
-import com.liwy.easyhttp.callback.DataParser;
+import com.liwy.easyhttp.DataParse.DataParser;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.test.bean.Data;

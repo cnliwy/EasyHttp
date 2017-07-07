@@ -1,8 +1,10 @@
-package com.liwy.easyhttp.callback;
+package com.liwy.easyhttp.DataParse;
 
 import android.util.Xml;
 
-import com.google.gson.Gson;
+import com.liwy.easyhttp.callback.Callback;
+import com.liwy.easyhttp.callback.ErrorCallback;
+import com.liwy.easyhttp.callback.SuccessCallback;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.convert.AnnotationStrategy;
@@ -15,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

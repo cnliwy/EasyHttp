@@ -6,5 +6,4 @@ package com.liwy.easyhttp.callback;
 
 public interface  SuccessListener<T>{
     public void success(T result);
-
 }

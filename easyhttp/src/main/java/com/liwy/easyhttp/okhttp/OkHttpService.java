@@ -3,13 +3,10 @@ package com.liwy.easyhttp.okhttp;
 
 import android.util.Log;
 
-import com.liwy.easyhttp.DataParse.ReqClassUtils;
-import com.liwy.easyhttp.DataParse.TypeInfo;
-import com.liwy.easyhttp.DataParse.TypeUtils;
 import com.liwy.easyhttp.base.AbHttpService;
 import com.liwy.easyhttp.base.EasyFile;
 import com.liwy.easyhttp.base.MainThread;
-import com.liwy.easyhttp.callback.DataParser;
+import com.liwy.easyhttp.DataParse.DataParser;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
