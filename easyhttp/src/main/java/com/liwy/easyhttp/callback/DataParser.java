@@ -2,8 +2,6 @@ package com.liwy.easyhttp.callback;
 
 import android.util.Xml;
 
-import com.google.gson.Gson;
-
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.convert.AnnotationStrategy;
 import org.simpleframework.xml.core.Persister;
@@ -15,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,7 +59,7 @@ public class DataParser {
                         if (successCallback != null)
                             successCallback.success(result);
                     }else{
-                        if (successCallback != null) successCallback.success(getXMLObject(convertToEcrfContent(result),responseClass));
+                        if (successCallback != null) successCallback.success(getXMLObject(convertContent(result),responseClass));
                     }
                 }
             }
@@ -127,7 +124,7 @@ public class DataParser {
     }
 
     //WebService返回的xml结果
-    public static String convertToEcrfContent(String result) {
+    public static String convertContent(String result) {
         String mResponseBody = "";
         try {
             InputStream xmlIs = new ByteArrayInputStream(result.getBytes("UTF-8"));

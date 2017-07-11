@@ -143,7 +143,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.3'
 
 更新日志
 ---
-1.0.4(下版本)
+1.0.4(待发布)
 ---
 1. 新增文件上传功能(OkHttpService已实现)
 2. OkHttpService实现主线程回调

@@ -52,10 +52,6 @@ public class OkHttpService extends AbHttpService {
 
     @Override
     public <T> void get(String url, Map<String, Object> params, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
-//        final Class<T> responseClass = getResultParameterClass(successCallback);
-//        System.out.println(successCallback.getClass().getComponentType());
-//        TypeInfo typeInfo = ReqClassUtils.getCallbackGenericType(successCallback.getClass());
-//        final Class<?> responseClass = TypeUtils.getResponseClass(typeInfo);
         final Class<?> responseClass = successCallback.rawType;
         System.out.println(responseClass.getName());
         String realUrl = makeGetUrl(url,params);//generate get url
