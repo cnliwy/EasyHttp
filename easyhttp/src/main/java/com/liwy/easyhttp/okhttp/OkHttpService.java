@@ -3,9 +3,6 @@ package com.liwy.easyhttp.okhttp;
 
 import android.util.Log;
 
-import com.liwy.easyhttp.DataParse.ReqClassUtils;
-import com.liwy.easyhttp.DataParse.TypeInfo;
-import com.liwy.easyhttp.DataParse.TypeUtils;
 import com.liwy.easyhttp.base.AbHttpService;
 import com.liwy.easyhttp.base.EasyFile;
 import com.liwy.easyhttp.base.MainThread;
@@ -28,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -107,14 +105,16 @@ public class OkHttpService extends AbHttpService {
     }
 
 
+    //json请求
     private static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
+    // 表单请求
 
     @Override
     public <T> void post(String url, Map<String, Object> params, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         final Class<T> responseClass = getResultParameterClass(successCallback);
         String content = map2json(params);
-        RequestBody formBody = RequestBody.create(JSON,content);
-
+//        RequestBody formBody = RequestBody.create(JSON,content);
+        RequestBody formBody = map2form(params);
         Request request = new Request.Builder().url(url).post(formBody).build();
         Call call = okHttpClient.newCall(request);
         addCall(tag,call);
@@ -329,6 +329,26 @@ public class OkHttpService extends AbHttpService {
             }
         }
         return jsonObject.toString();
+    }
+
+    /**
+     * convert map to FormBody
+     * @param params
+     * @return
+     */
+    private static FormBody map2form(Map<String,Object> params){
+
+        if (params != null){
+            Set<String> keys = params.keySet();
+            if (!keys.isEmpty()){
+                FormBody.Builder builder = new FormBody.Builder();
+                for (String key : keys){
+                    builder.add(key,String.valueOf(params.get(key)));
+                }
+                return builder.build();
+            }
+        }
+        return null;
     }
 
     /**
