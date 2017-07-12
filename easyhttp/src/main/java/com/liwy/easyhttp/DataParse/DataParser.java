@@ -2,6 +2,7 @@ package com.liwy.easyhttp.DataParse;
 
 import android.util.Xml;
 
+import com.google.gson.Gson;
 import com.liwy.easyhttp.callback.Callback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
@@ -36,12 +37,14 @@ public class DataParser {
             @Override
             public void onSuccess(String result,SuccessCallback successCallback) {
                 if (successCallback != null){
-                    if (successCallback.rawType == String.class || successCallback.rawType == null){
+                    if (successCallback.mType == String.class || successCallback.mType == null){
                         successCallback.success(result);
                     }else{
                         try {
-                            successCallback.success( successCallback.adapter.fromJson(result));
-                        } catch (IOException e) {
+                            successCallback.success(new Gson().fromJson(result,successCallback.mType));
+//                            successCallback.success( successCallback.adapter.fromJson(result));
+//                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                             successCallback.success(null);
                         }
@@ -63,7 +66,7 @@ public class DataParser {
                         if (successCallback != null)
                             successCallback.success(result);
                     }else{
-                        if (successCallback != null) successCallback.success(getXMLObject(convertToEcrfContent(result),successCallback.rawType));
+                        if (successCallback != null) successCallback.success(getXMLObject(convertToParseContent(result),successCallback.rawType));
                     }
                 }
             }
@@ -128,7 +131,7 @@ public class DataParser {
     }
 
     //WebService返回的xml结果
-    public static String convertToEcrfContent(String result) {
+    public static String convertToParseContent(String result) {
         String mResponseBody = "";
         try {
             InputStream xmlIs = new ByteArrayInputStream(result.getBytes("UTF-8"));

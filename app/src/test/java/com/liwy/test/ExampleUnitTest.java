@@ -1,6 +1,7 @@
 package com.liwy.test;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.$Gson$Types;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.test.bean.Data;
 import com.liwy.test.bean.TestResult;
@@ -28,6 +29,27 @@ public class ExampleUnitTest {
         String jsonStr = "{ \"name\": \"liwy\", \"url\": \"www.baidu.com\"}";
         Data data = new Gson().fromJson(jsonStr,Data.class);
         System.out.println(data.toString());
+    }
+    @Test
+    public void testType(){
+        SuccessCallback<List<Data>> successCallback = new SuccessCallback<List<Data>>() {
+            @Override
+            public void success(List<Data> result) {
+
+            }
+        };
+        Type type = getSuperclassTypeParameter(successCallback.getClass());
+//        System.out.println(type.toString());
+    }
+    public Type getSuperclassTypeParameter(Class<?> subclass) {
+        System.out.println("subclass = " + subclass.toString());
+        Type superclass = subclass.getGenericSuperclass();
+        System.out.println("superclass = " + subclass.toString());
+        if (superclass instanceof Class) {
+            throw new RuntimeException("Missing type parameter.");
+        }
+        ParameterizedType parameterized = (ParameterizedType) superclass;
+        return $Gson$Types.canonicalize(parameterized.getActualTypeArguments()[0]);
     }
 
     @Test

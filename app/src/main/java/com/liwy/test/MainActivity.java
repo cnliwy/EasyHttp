@@ -13,6 +13,7 @@ import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.test.bean.Data;
 import com.liwy.test.bean.LoginResponse;
+import com.liwy.test.bean.Test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -120,17 +121,23 @@ public class MainActivity extends AppCompatActivity {
         Map<String,Object> params = new HashMap<>();
 //        params.put("ver","1");
         params.put("identity","2c92e0315d2c6cd5015d2c6fb7fa0000");
-        params.put("jsonKey","getDataList");
+        params.put("jsonKey","getMutilData");
         EasyHttp.getBuilder()
                 .setUrl("http://39.108.234.92:8888/cnliwy/appdata/getTestData")
                 .setParams(params)
                 .setSuccessCallback(new SuccessCallback<List<Data>>() {
                     @Override
                     public void success(List<Data> result) {
-                        System.out.println(result.toString());
+//                        System.out.println(result.toString());
                         if (result != null && result.size() > 0){
                             for (Data data : result){
-                                System.out.println(data.toString());
+                                System.out.println("data数据=" + data.toString());
+                                if (data.getTests() != null && data.getTests().size() > 0){
+                                    for (Test test : data.getTests()){
+                                        System.out.println("test = " + test.toString());
+                                    }
+                                }
+
                             }
                         }
                         contentTv.setText("data'size = " + result.size());

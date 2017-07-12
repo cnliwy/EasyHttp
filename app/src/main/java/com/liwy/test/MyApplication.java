@@ -36,7 +36,7 @@ public class MyApplication extends Application {
         // 也可以自定义解析方式，比如解析html类型的数据
         DataParser.addCallback("html", new Callback() {
             @Override
-            public void onSuccess(String result, Class<?> clazz, SuccessCallback successCallback) {
+            public void onSuccess(String result,SuccessCallback successCallback) {
                 // do parsing which you want to
             }
 
