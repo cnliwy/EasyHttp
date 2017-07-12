@@ -34,9 +34,9 @@ public class DataParser {
         // 添加GSON解析
         DataParser.addCallback(DataParser.PARSE_GSON,new Callback() {
             @Override
-            public void onSuccess(String result,Class<?> responseClass, SuccessCallback successCallback) {
+            public void onSuccess(String result,SuccessCallback successCallback) {
                 if (successCallback != null){
-                    if (responseClass == String.class || responseClass == null){
+                    if (successCallback.rawType == String.class || successCallback.rawType == null){
                         successCallback.success(result);
                     }else{
                         try {
@@ -57,13 +57,13 @@ public class DataParser {
         // 添加xml解析
         DataParser.addCallback(DataParser.PARSE_XML, new Callback() {
             @Override
-            public void onSuccess(String result, Class<?> responseClass, SuccessCallback successCallback) {
+            public void onSuccess(String result, SuccessCallback successCallback) {
                 if (successCallback != null){
-                    if (responseClass == String.class || responseClass == null){
+                    if (successCallback.rawType == String.class || successCallback.rawType == null){
                         if (successCallback != null)
                             successCallback.success(result);
                     }else{
-                        if (successCallback != null) successCallback.success(getXMLObject(convertToEcrfContent(result),responseClass));
+                        if (successCallback != null) successCallback.success(getXMLObject(convertToEcrfContent(result),successCallback.rawType));
                     }
                 }
             }

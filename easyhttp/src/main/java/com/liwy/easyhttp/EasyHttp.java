@@ -60,8 +60,8 @@ public class EasyHttp implements IHttpService {
      * @param url
      * @param params
      */
-    public <T> void post(String url, Map<String,Object> params,Object tag,String parseType, SuccessCallback<T> successCallback,ErrorCallback errorCallback){
-        if (httpService != null)httpService.post(url,params,tag,parseType,successCallback,errorCallback);
+    public <T> void post(String url, Map<String,Object> params,Object tag,String parseType,int contentType,SuccessCallback<T> successCallback,ErrorCallback errorCallback){
+        if (httpService != null)httpService.post(url,params,tag,parseType,contentType, successCallback,errorCallback);
     }
 
     @Override
@@ -108,6 +108,7 @@ public class EasyHttp implements IHttpService {
         private String filePath;
         private String fileName;
         private String parseType;
+        private int contentType;
         private List<EasyFile> files;
         private Map<String,Object> params;
         private SuccessCallback successCallback;
@@ -119,7 +120,7 @@ public class EasyHttp implements IHttpService {
         }
 
         public void post(){
-            EasyHttp.getInstance().post(url,params,tag,parseType,successCallback,errorCallback);
+            EasyHttp.getInstance().post(url,params,tag,parseType,contentType, successCallback,errorCallback);
         }
         public void postFile(){
             EasyHttp.getInstance().postFile(url,params,files,tag,parseType,successCallback,errorCallback);
@@ -180,6 +181,16 @@ public class EasyHttp implements IHttpService {
 
         public Builder setFiles(List<EasyFile> files) {
             this.files = files;
+            return this;
+        }
+
+        /**
+         * @(CONTENT_TYPE_FORM)
+         * @param contentType
+         * @return
+         */
+        public Builder setContentType(int contentType) {
+            this.contentType = contentType;
             return this;
         }
     }

@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -42,6 +43,9 @@ import static android.content.ContentValues.TAG;
 public class OkHttpService extends AbHttpService {
     public OkHttpClient okHttpClient;
     private MainThread mainThread = new MainThread();
+    public static int CONTENT_TYPE_FORM = 0;//默认post提交方式：表单提交
+    public static int CONTENT_TYPE_JSON = 1;
+
 
     public OkHttpService(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
@@ -50,7 +54,7 @@ public class OkHttpService extends AbHttpService {
 
 
     @Override
-    public <T> void get(String url, Map<String, Object> params, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+    public <T> void get(String url, Map<String, Object> params, final Object tag, final String parseType,final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
 //        final Class<T> responseClass = getResultParameterClass(successCallback);
 //        System.out.println(successCallback.getClass().getComponentType());
 //        TypeInfo typeInfo = ReqClassUtils.getCallbackGenericType(successCallback.getClass());
@@ -88,15 +92,7 @@ public class OkHttpService extends AbHttpService {
                             String type = "";
                             if (parseType != null && !"".equals(parseType))type = parseType;
                             else type = DataParser.getDefaultParseType();
-                            DataParser.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
-//                            if (successCallback != null){
-//                                if (responseClass == String.class){
-//                                    if (successCallback != null)
-//                                        successCallback.success((T)content);
-//                                }else{
-//                                    if (successCallback != null) successCallback.success((T) new Gson().fromJson(content,responseClass));
-//                                }
-//                            }
+                            DataParser.getCallbackMap().get(type).onSuccess(content,successCallback);
                         }
                     });
             }
@@ -107,10 +103,14 @@ public class OkHttpService extends AbHttpService {
     private static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
 
     @Override
-    public <T> void post(String url, Map<String, Object> params, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
-        final Class<T> responseClass = getResultParameterClass(successCallback);
-        String content = map2json(params);
-        RequestBody formBody = RequestBody.create(JSON,content);
+    public <T> void post(String url, Map<String, Object> params, final Object tag, final String parseType,final int contentType,  final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
+        RequestBody formBody;
+        if (contentType == CONTENT_TYPE_JSON){
+            String content = map2json(params);
+            formBody = RequestBody.create(JSON,content);
+        }else{
+            formBody = map2form(params);
+        }
 
         Request request = new Request.Builder().url(url).post(formBody).build();
         Call call = okHttpClient.newCall(request);
@@ -143,7 +143,8 @@ public class OkHttpService extends AbHttpService {
                         String type = "";
                         if (parseType != null && !"".equals(parseType))type = parseType;
                         else type = DataParser.getDefaultParseType();
-                        DataParser.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
+                        System.out.println("请求到的数据--->" + content);
+                        DataParser.getCallbackMap().get(type).onSuccess(content,successCallback);
 //                        if (successCallback != null)successCallback.success((T) content);
                     }
                 });
@@ -153,8 +154,6 @@ public class OkHttpService extends AbHttpService {
     }
 
     public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback){
-        final Class<T> responseClass = getResultParameterClass(successCallback);
-
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         // add file
         for (int i = 0; i <files.size() ; i++) {
@@ -204,7 +203,7 @@ public class OkHttpService extends AbHttpService {
                         String type = "";
                         if (parseType != null && !"".equals(parseType))type = parseType;
                         else type = DataParser.getDefaultParseType();
-                        DataParser.getCallbackMap().get(type).onSuccess(content,responseClass,successCallback);
+                        DataParser.getCallbackMap().get(type).onSuccess(content,successCallback);
                     }
                 });
             }
@@ -326,6 +325,26 @@ public class OkHttpService extends AbHttpService {
             }
         }
         return jsonObject.toString();
+    }
+
+    /**
+     * convert map to FormBody
+     * @param params
+     * @return
+     */
+    private static FormBody map2form(Map<String,Object> params){
+
+        if (params != null){
+            Set<String> keys = params.keySet();
+            if (!keys.isEmpty()){
+                FormBody.Builder builder = new FormBody.Builder();
+                for (String key : keys){
+                    builder.add(key,String.valueOf(params.get(key)));
+                }
+                return builder.build();
+            }
+        }
+        return null;
     }
 
     /**

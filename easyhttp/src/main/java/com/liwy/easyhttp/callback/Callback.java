@@ -5,6 +5,6 @@ package com.liwy.easyhttp.callback;
  */
 
 public interface Callback {
-    public void onSuccess(String result,Class<?> clazz,SuccessCallback successCallback);
+    public void onSuccess(String result,SuccessCallback successCallback);
     public void onError(String error,ErrorCallback errorCallback);
 }

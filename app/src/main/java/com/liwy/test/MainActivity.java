@@ -7,23 +7,26 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.DataParse.DataParser;
+import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.test.bean.Data;
 import com.liwy.test.bean.LoginResponse;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.liwy.easyhttp.okhttp.OkHttpService.CONTENT_TYPE_FORM;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     TextView contentTv;
     Button getGSONBtn;
     Button getXMLBtn;
+    Button postDataBtn;
+    Button postListBtn;
     Button postBtn;
     Button nextBtn;
 
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         getGSONBtn = (Button)findViewById(R.id.btn_get_gson);
         getXMLBtn = (Button)findViewById(R.id.btn_get_xml);
         postBtn = (Button)findViewById(R.id.btn_post);
+        postListBtn = (Button)findViewById(R.id.btn_post_list);
+        postDataBtn = (Button)findViewById(R.id.btn_post_data);
         nextBtn = (Button)findViewById(R.id.btn_next);
         getGSONBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        postListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getListByPost();
+            }
+        });
+        postDataBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getObjectByPost();
+            }
+        });
         contentTv = (TextView)findViewById(R.id.tv_content);
     }
 
@@ -73,36 +90,88 @@ public class MainActivity extends AppCompatActivity {
      * setUrl("http://192.168.131.192:8886/login/update")
      */
     public void getGSONData(){
-        List<Data> type = new ArrayList<Data>();
-        System.out.println("集合：" + type.getClass());
         // 参数
         Map<String,Object> params = new HashMap<>();
-        params.put("ver","1");
+        params.put("identity","2c92e0315d2c6cd5015d2c6fb7fa0000");
+        params.put("jsonKey","test");
         EasyHttp.getBuilder()
 //                .setUrl("/login/update")
-                .setUrl("http://192.168.131.19:8886/login/datatest")
+                .setUrl("http://39.108.234.92:8888/cnliwy/appdata/getTestData")
                 .setTag("get")
                 .setParams(params)
-                .setSuccessCallback(new SuccessCallback<List<Data>>() {
+                .setContentType(CONTENT_TYPE_FORM)
+                .setSuccessCallback(new SuccessCallback<String>() {
                     @Override
-                    public void success(List<Data> result) {
-                        System.out.println(result.toString());
-                        contentTv.setText("get = " + result.get(2).toString());
-                    }
-                })
-//                .setSuccessCallback(new SuccessCallback<List<Data>>() {
-//                    @Override
-//                    public void success(List<Data> result) {
-//                        System.out.println(result.toString());
-//                        contentTv.setText("get = " + result.get(2).toString());
-//                    }})
+                    public void success(String result) {
+                        System.out.println(result);
+                        contentTv.setText("get = " + result);
+                    }})
                 .setErrorCallback(new ErrorCallback() {
                     @Override
                     public void error(String errorMsg) {
                         contentTv.setText("请求失败");
                     }})
-                .get();
+                .post();
+//                .get();
     }
+
+    public void getListByPost(){
+        // 参数
+        Map<String,Object> params = new HashMap<>();
+//        params.put("ver","1");
+        params.put("identity","2c92e0315d2c6cd5015d2c6fb7fa0000");
+        params.put("jsonKey","getDataList");
+        EasyHttp.getBuilder()
+                .setUrl("http://39.108.234.92:8888/cnliwy/appdata/getTestData")
+                .setParams(params)
+                .setSuccessCallback(new SuccessCallback<List<Data>>() {
+                    @Override
+                    public void success(List<Data> result) {
+                        System.out.println(result.toString());
+                        if (result != null && result.size() > 0){
+                            for (Data data : result){
+                                System.out.println(data.toString());
+                            }
+                        }
+                        contentTv.setText("data'size = " + result.size());
+                    }
+                })
+                .setContentType(CONTENT_TYPE_FORM)
+                .setErrorCallback(new ErrorCallback() {
+                    @Override
+                    public void error(String errorMsg) {
+                        contentTv.setText("请求失败");
+                    }})
+                .post();
+//                .get();
+    }
+
+    public void getObjectByPost(){
+        // 参数
+        Map<String,Object> params = new HashMap<>();
+//        params.put("ver","1");
+        params.put("identity","2c92e0315d2c6cd5015d2c6fb7fa0000");
+        params.put("jsonKey","getData");
+        EasyHttp.getBuilder()
+                .setUrl("http://39.108.234.92:8888/cnliwy/appdata/getTestData")
+                .setParams(params)
+                .setSuccessCallback(new SuccessCallback<Data>() {
+                    @Override
+                    public void success(Data result) {
+                        System.out.println(result.toString());
+                        contentTv.setText("data'content = " + result.toString());
+                    }
+                })
+                .setContentType(CONTENT_TYPE_FORM)
+                .setErrorCallback(new ErrorCallback() {
+                    @Override
+                    public void error(String errorMsg) {
+                        contentTv.setText("请求失败");
+                    }})
+                .post();
+//                .get();
+    }
+
 
     /**
      * the get request which parse xml data

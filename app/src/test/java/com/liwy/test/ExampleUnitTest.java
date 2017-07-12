@@ -1,12 +1,15 @@
 package com.liwy.test;
 
+import com.google.gson.Gson;
+import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.test.bean.Data;
 import com.liwy.test.bean.TestResult;
-import com.liwy.test.callback.SuccessCallback;
 
 import org.junit.Test;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -19,6 +22,12 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
+    }
+    @Test
+    public void parseData(){
+        String jsonStr = "{ \"name\": \"liwy\", \"url\": \"www.baidu.com\"}";
+        Data data = new Gson().fromJson(jsonStr,Data.class);
+        System.out.println(data.toString());
     }
 
     @Test

@@ -30,10 +30,12 @@ public interface IHttpService {
      * @param url
      * @param params
      * @param tag
+     * @param parseType
+     * @param contentType
      * @param successCallback
      * @param errorCallback
      */
-    public <T> void post(String url, Map<String, Object> params,Object tag, String parseType, SuccessCallback<T> successCallback, ErrorCallback errorCallback);
+    public <T> void post(String url, Map<String, Object> params,Object tag, String parseType,int contentType, SuccessCallback<T> successCallback, ErrorCallback errorCallback);
 
     /**
      * upload files

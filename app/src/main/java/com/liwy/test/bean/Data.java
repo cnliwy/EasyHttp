@@ -7,12 +7,14 @@ package com.liwy.test.bean;
 public class Data {
     public String name;
     public int age;
+    public String url;
 
     @Override
     public String toString() {
         return "Data{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
+                ", url='" + url + '\'' +
                 '}';
     }
 
@@ -20,7 +22,24 @@ public class Data {
         return name;
     }
 
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

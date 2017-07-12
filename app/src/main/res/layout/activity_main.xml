@@ -29,6 +29,30 @@
         />
 
     <Button
+        android:id="@+id/btn_post_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/colorPrimary"
+        android:textColor="#ffffff"
+        android:text="post(List)"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:id="@+id/btn_post_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/colorPrimary"
+        android:textColor="#ffffff"
+        android:text="post(data)"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
         android:id="@+id/btn_get_gson"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
