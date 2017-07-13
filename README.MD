@@ -8,10 +8,11 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
 ---
 在Application里初始化,主要初始化内容为统一解析回调和IHttpService实现类传入，具体如下：
 ```
+         // 默认已实现两种解析方式GSON和xml
          // 也可以自定义解析方式，比如解析html类型的数据
          DataParser.addCallback("html", new Callback() {
              @Override
-             public void onSuccess(String result, Class<?> clazz, SuccessCallback successCallback) {
+             public void onSuccess(String result,SuccessCallback successCallback) {
                  // do parsing which you want to
              }
  
@@ -47,7 +48,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
                     }})
                 .setErrorCallback(new ErrorCallback() {
                     @Override
-                    public void error(Object... values) {
+                    public void error(String errorMsg) {
                         contentTv.setText("请求失败");
                     }})
                 .get();
@@ -71,7 +72,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
                     }})
                 .setErrorCallback(new ErrorCallback() {
                     @Override
-                    public void error(Object... values) {
+                    public void error(String errorMsg) {
                         contentTv.setText("请求失败");
                     }})
                 .post();
@@ -124,7 +125,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
             }
         }).setErrorCallback(new ErrorCallback() {
             @Override
-            public void error(Object... values) {
+            public void error(String errorMsg) {
                 System.out.println(values[0].toString());
                 contentTv.setText("上传失败"+ values[0].toString());
             }
