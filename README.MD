@@ -8,8 +8,6 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
 ---
 在Application里初始化,主要初始化内容为统一解析回调和IHttpService实现类传入，具体如下：
 ```
-         // 设置默认解析方式（已实现gson和xml的数据解析）
-         DataParser.setDefaultParseType(DataParser.PARSE_GSON);
          // 也可以自定义解析方式，比如解析html类型的数据
          DataParser.addCallback("html", new Callback() {
              @Override
@@ -22,16 +20,13 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
                  // http error
              }
          });
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).build();
-        OkHttpService okHttpService = new OkHttpService().init(okHttpClient);
-        EasyHttp.getInstance().setHttpService(okHttpService);
+        // 实例化请求实现类
+         OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS).build();
+         OkHttpService okHttpService = new OkHttpService(okHttpClient);
+         // 设置EasyHttp的功能实现类为okHttpService，post提交方式为form表单，数据解析方式为GSON
+         EasyHttp.getInstance().initHttpService(okHttpService, Constants.CONTENT_TYPE_FORM,DataParser.PARSE_GSON);
 ```
-或者
-```
-        RetrofitService retrofitService = new RetrofitService().init("http://192.168.131.19:8886/",10);
-        EasyHttp.getInstance().setHttpService(retrofitService);
-```
-现实现了两种Http服务，分别是基于OkHttp和Retrofit，其中基于Retrofit的实现RetrofitService尚待完善。
+
 
 三、 使用
 ---
@@ -65,7 +60,8 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
         params.put("ver","1");
         new EasyHttp.Builder()
                 .setUrl("/login/update")
-                .setParseType(DataParser.PARSE_GSON)    // 设置数据的解析方式为GSON
+                .setContentType(CONTENT_TYPE_FORM) // 设置post的请求内容格式为form表单，不设置采用默认方式
+                .setParseType(DataParser.PARSE_GSON)    // 设置数据的解析方式为GSON，也可传入自定义的解析类型
                 .setTag("update")   //请求的tag，可用于中断请求
                 .setParams(params)
                 .setSuccessCallback(new SuccessCallback<String>() {
@@ -145,14 +141,14 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
 
 更新日志
 ---
-1.0.6（待发布）
+1.0.6（最新）
 ---
 1. 实现泛型类的自定义解析，解除对GSON的依赖
 2. 取消EasyHttp对IHttpService的实现，采用HttpProxyService代理类实现功能
 3. EasyHttp初始化方法更改为initHttpService，并新增两个参数，分别设置post请求的默认ContentType和默认的数据解析方式parseType
 
 
-1.0.5（最新）
+1.0.5
 ---
 1. 源码分为两个分支，其中release为发布版分支
 2. 清理release分支下retrofit的实现及依赖包

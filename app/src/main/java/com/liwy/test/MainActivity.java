@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 .setUrl("http://39.108.234.92:8888/cnliwy/appdata/getTestData")
                 .setTag("get")
                 .setParams(params)
-                .setContentType(CONTENT_TYPE_FORM)
+                .setContentType(CONTENT_TYPE_FORM) // 设置post的请求内容格式，不设置采用默认方式
                 .setSuccessCallback(new SuccessCallback<String>() {
                     @Override
                     public void success(String result) {
