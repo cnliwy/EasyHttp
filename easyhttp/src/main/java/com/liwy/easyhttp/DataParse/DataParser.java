@@ -99,7 +99,7 @@ public class DataParser {
 
     /**
      * set the default type to parse the data
-     * @param typeKey
+     * @param typeKey PARSE_GSON  PARSE_XML
      */
     public static void setDefaultParseType(String typeKey){
         defaultParseType = typeKey;

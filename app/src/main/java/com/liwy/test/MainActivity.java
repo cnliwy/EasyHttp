@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.liwy.easyhttp.okhttp.OkHttpService.CONTENT_TYPE_FORM;
+import static com.liwy.easyhttp.common.Constants.CONTENT_TYPE_FORM;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         params.put("sessionID","1");
 
         EasyHttp.getBuilder()
-                .setUrl("http://122.224.205.147:8008/GCPServer.asmx/ListNewTasks")
+                .setUrl("http://192.168.1.147:8008/GCPServer.asmx/ListNewTasks")
                 .setParams(params)
                 .setParseType(DataParser.PARSE_XML)
                 .setSuccessCallback(new SuccessCallback<XmlTask>() {

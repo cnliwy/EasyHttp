@@ -2,8 +2,10 @@ package com.liwy.easyhttp;
 
 import android.content.Context;
 
-import com.liwy.easyhttp.base.EasyFile;
-import com.liwy.easyhttp.base.IHttpService;
+import com.liwy.easyhttp.DataParse.DataParser;
+import com.liwy.easyhttp.common.Constants;
+import com.liwy.easyhttp.common.EasyFile;
+import com.liwy.easyhttp.service.IHttpService;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
@@ -11,13 +13,15 @@ import com.liwy.easyhttp.callback.SuccessCallback;
 import java.util.List;
 import java.util.Map;
 
+import static android.R.attr.type;
+
 /**
  * Created by liwy on 2017/6/5.
  */
 
-public class EasyHttp implements IHttpService {
+public class EasyHttp  {
     private static EasyHttp instance;
-    private IHttpService httpService;
+    private HttpProxyService httpService;
     private Context context;
 
     protected EasyHttp() {
@@ -44,49 +48,30 @@ public class EasyHttp implements IHttpService {
         return instance;
     }
 
-
     /**
-     * get method
-     * @param url
-     * @param params
+     * 取消请求
+     * @param tag
      */
-    public <T> void get(String url, Map<String,Object> params,Object tag,String parseType, SuccessCallback<T> successCallback, ErrorCallback errorCallback){
-        if (httpService != null)httpService.get(url,params,tag,parseType,successCallback,errorCallback);
+    public void cancelHttp(Object tag){
+        getHttpService().cancelHttp(tag);
     }
 
 
-    /**
-     * post method
-     * @param url
-     * @param params
-     */
-    public <T> void post(String url, Map<String,Object> params,Object tag,String parseType,int contentType,SuccessCallback<T> successCallback,ErrorCallback errorCallback){
-        if (httpService != null)httpService.post(url,params,tag,parseType,contentType, successCallback,errorCallback);
-    }
-
-    @Override
-    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, Object tag,String parseType,  SuccessCallback<T> successCallback, ErrorCallback errorCallback) {
-        if (httpService != null)httpService.postFile(url,params,files,tag,parseType,successCallback,errorCallback);
-    }
-
-    @Override
-    public <T> void download(String fileUrl, String destFileDir,String fileName,Object tag, DownloadCallback<T> downloadCallback) {
-        if (fileUrl == null)throw new NullPointerException("fileUrl can't be null!");
-        if (httpService != null)httpService.download(fileUrl,destFileDir,fileName,tag,downloadCallback);
-    }
-
-    @Override
-    public void cancelHttp(Object tag) {
-        if (httpService != null)httpService.cancelHttp(tag);
+    private HttpProxyService getHttpService() {
+        return httpService;
     }
 
     /**
      *  set the implementation of IHttpService
-     * @param httpService OkHttpService or RetrofitService
+     * @param httpService OkHttpService 或者其他实现IHttpService的类
+     * @param contentType CONTENT_TYPE_FORM   CONTENT_TYPE_JSON
+     * @param parseType 数据解析方式 PARSE_GSON PARSE_XML
      * @return
      */
-    public EasyHttp setHttpService(IHttpService httpService) {
-        this.httpService = httpService;
+    public EasyHttp initHttpService(IHttpService httpService,int contentType,String parseType) {
+        this.httpService = new HttpProxyService(httpService);
+        Constants.defaultPostType = contentType;
+        if(parseType != null && !"".equals(parseType) && DataParser.getCallbackMap().get(parseType) != null)DataParser.setDefaultParseType(parseType);
         return this;
     }
 
@@ -116,17 +101,17 @@ public class EasyHttp implements IHttpService {
         private DownloadCallback downloadCallback;
 
         public void get(){
-            EasyHttp.getInstance().get(url,params,tag,parseType,successCallback,errorCallback);
+            EasyHttp.getInstance().getHttpService().get(url,params,tag,parseType,successCallback,errorCallback);
         }
 
         public void post(){
-            EasyHttp.getInstance().post(url,params,tag,parseType,contentType, successCallback,errorCallback);
+            EasyHttp.getInstance().getHttpService().post(url,params,tag,parseType,contentType, successCallback,errorCallback);
         }
         public void postFile(){
-            EasyHttp.getInstance().postFile(url,params,files,tag,parseType,successCallback,errorCallback);
+            EasyHttp.getInstance().getHttpService().postFile(url,params,files,tag,parseType,successCallback,errorCallback);
         }
         public void download(){
-            EasyHttp.getInstance().download(fileUrl,filePath,fileName,tag,downloadCallback);
+            EasyHttp.getInstance().getHttpService().download(fileUrl,filePath,fileName,tag,downloadCallback);
         }
 
         public Builder setUrl(String url) {
@@ -149,16 +134,31 @@ public class EasyHttp implements IHttpService {
             return this;
         }
 
+        /**
+         * 可选，不需要中途取消则不用设置
+         * @param tag
+         * @return
+         */
         public Builder setTag(Object tag) {
             this.tag = tag;
             return this;
         }
 
+        /**
+         * 设置文件下载url
+         * @param fileUrl
+         * @return
+         */
         public Builder setFileUrl(String fileUrl) {
             this.fileUrl = fileUrl;
             return this;
         }
 
+        /**
+         * 设置文件的存储名称
+         * @param fileName
+         * @return
+         */
         public Builder setFileName(String fileName) {
             this.fileName = fileName;
             return this;
@@ -169,11 +169,21 @@ public class EasyHttp implements IHttpService {
             return this;
         }
 
+        /**
+         * 设置文件的下载路径
+         * @param filePath
+         * @return
+         */
         public Builder setFilePath(String filePath) {
             this.filePath = filePath;
             return this;
         }
 
+        /**
+         * 设置response数据的解析方式，gson/xml等等
+         * @param parseType
+         * @return
+         */
         public Builder setParseType(String parseType) {
             this.parseType = parseType;
             return this;
@@ -185,7 +195,7 @@ public class EasyHttp implements IHttpService {
         }
 
         /**
-         * @(CONTENT_TYPE_FORM)
+         * 设置post请求的content-type. form或者json
          * @param contentType
          * @return
          */

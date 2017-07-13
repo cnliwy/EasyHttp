@@ -1,7 +1,5 @@
-package com.liwy.easyhttp.base;
+package com.liwy.easyhttp.common;
 
-import com.liwy.easyhttp.callback.ErrorCallback;
-import com.liwy.easyhttp.callback.SuccessCallback;
 
 import java.util.Map;
 

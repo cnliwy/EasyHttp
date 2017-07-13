@@ -1,11 +1,12 @@
-package com.liwy.easyhttp.okhttp;
+package com.liwy.easyhttp.impl;
 
 
 import android.util.Log;
 
-import com.liwy.easyhttp.base.AbHttpService;
-import com.liwy.easyhttp.base.EasyFile;
-import com.liwy.easyhttp.base.MainThread;
+import com.liwy.easyhttp.service.AbHttpService;
+import com.liwy.easyhttp.common.Constants;
+import com.liwy.easyhttp.common.EasyFile;
+import com.liwy.easyhttp.common.MainThread;
 import com.liwy.easyhttp.DataParse.DataParser;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
@@ -43,8 +44,7 @@ import static android.content.ContentValues.TAG;
 public class OkHttpService extends AbHttpService {
     public OkHttpClient okHttpClient;
     private MainThread mainThread = new MainThread();
-    public static int CONTENT_TYPE_FORM = 0;//默认post提交方式：表单提交
-    public static int CONTENT_TYPE_JSON = 1;
+
 
 
     public OkHttpService(OkHttpClient okHttpClient) {
@@ -98,7 +98,7 @@ public class OkHttpService extends AbHttpService {
     @Override
     public <T> void post(String url, Map<String, Object> params, final Object tag, final String parseType,final int contentType,  final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         RequestBody formBody;
-        if (contentType == CONTENT_TYPE_JSON){
+        if (contentType == Constants.CONTENT_TYPE_JSON){
             String content = map2json(params);
             formBody = RequestBody.create(JSON,content);
         }else{

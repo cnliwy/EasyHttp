@@ -1,4 +1,4 @@
-package com.liwy.easyhttp.base;
+package com.liwy.easyhttp.common;
 
 import android.os.Handler;
 import android.os.Looper;

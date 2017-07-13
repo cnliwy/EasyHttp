@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.liwy.easyhttp.EasyHttp;
-import com.liwy.easyhttp.base.EasyFile;
+import com.liwy.easyhttp.common.EasyFile;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
@@ -53,26 +53,6 @@ public class NextActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         EasyHttp.getInstance().cancelHttp("update");
-    }
-
-    /**
-     * use the get request of EasyHttp
-     */
-    public void get(){
-        Map<String,Object> params = new HashMap<>();
-        params.put("ver","1");
-        EasyHttp.getInstance().get("/login/update", params,"update","", new SuccessCallback<TestResult>() {
-            @Override
-            public void success(TestResult result) {
-//                    JSONObject jsonObject = new JSONObject(result);
-                    System.out.println("next result = " + result);
-            }
-        }, new ErrorCallback() {
-            @Override
-            public void error(String errorMsg) {
-                System.out.println(errorMsg);
-            }
-        });
     }
 
     public void download(){

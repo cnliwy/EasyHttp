@@ -2,7 +2,7 @@ EasyHttp 一个可扩展的Http框架
 ===
 一、 引入项目
 ---
-compile 'com.liwy.easyhttp:easyhttp:1.0.5'
+compile 'com.liwy.easyhttp:easyhttp:1.0.6'
 
 二、 初始化
 ---
@@ -145,6 +145,13 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.5'
 
 更新日志
 ---
+1.0.6（待发布）
+---
+1. 实现泛型类的自定义解析，解除对GSON的依赖
+2. 取消EasyHttp对IHttpService的实现，采用HttpProxyService代理类实现功能
+3. EasyHttp初始化方法更改为initHttpService，并新增两个参数，分别设置post请求的默认ContentType和默认的数据解析方式parseType
+
+
 1.0.5（最新）
 ---
 1. 源码分为两个分支，其中release为发布版分支

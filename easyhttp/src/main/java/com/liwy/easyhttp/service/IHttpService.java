@@ -1,9 +1,10 @@
-package com.liwy.easyhttp.base;
+package com.liwy.easyhttp.service;
 
 
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.common.EasyFile;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public interface IHttpService {
      * @param errorCallback
      * @param <T>
      */
-    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, String parseType,final SuccessCallback<T> successCallback, final ErrorCallback errorCallback);
+    public <T> void postFile(String url, Map<String, Object> params, List<EasyFile> files, final Object tag, String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback);
 
 
     /**
