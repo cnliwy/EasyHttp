@@ -14,7 +14,6 @@ import org.simpleframework.xml.strategy.Strategy;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -42,8 +41,6 @@ public class DataParser {
                     }else{
                         try {
                             successCallback.success(new Gson().fromJson(result,successCallback.mType));
-//                            successCallback.success( successCallback.adapter.fromJson(result));
-//                        } catch (IOException e) {
                         } catch (Exception e) {
                             e.printStackTrace();
                             successCallback.success(null);

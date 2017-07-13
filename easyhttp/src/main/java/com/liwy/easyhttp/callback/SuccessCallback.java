@@ -1,9 +1,6 @@
 package com.liwy.easyhttp.callback;
 
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
 import com.google.gson.internal.$Gson$Types;
-import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -15,8 +12,6 @@ import java.lang.reflect.Type;
 public abstract class SuccessCallback<T> implements SuccessListener<T>{
     public Class<? super T> rawType;// T generic type
     public Type mType;//T type
-//    public Gson gson;
-//    public TypeAdapter<T> adapter;
     public SuccessCallback() {
         //GSON解析方式
 //        this.mType = getSuperclassTypeParameter(getClass());
@@ -28,7 +23,7 @@ public abstract class SuccessCallback<T> implements SuccessListener<T>{
         this.mType = getParameterType(getClass());
         this.rawType = (Class<? super T>)getRawType(mType);
         if (mType != null)System.out.println("mType = " + mType.toString());
-        if (rawType != null)System.out.println("rawType = " + mType.toString());
+        if (rawType != null)System.out.println("rawType = " + rawType.toString());
 
     }
     static Type getParameterType(Class<?> subclass){
@@ -48,6 +43,9 @@ public abstract class SuccessCallback<T> implements SuccessListener<T>{
             if (type instanceof ParameterizedType){
                 ParameterizedType parameterizedType = (ParameterizedType)type;
                 return parameterizedType.getRawType();
+            }else if (type instanceof Class<?>){
+                // successCallback里不是类型化参数的清空下
+             return (Class<?>)type;
             }
         }
         return null;

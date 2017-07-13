@@ -14,6 +14,7 @@ import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.test.bean.Data;
 import com.liwy.test.bean.LoginResponse;
 import com.liwy.test.bean.Test;
+import com.liwy.test.xml.XmlTask;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
         getXMLBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getXMLData();
+//                getXMLData();
+                getXMLList();
             }
 
         });
@@ -197,6 +199,38 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void success(LoginResponse result) {
                         contentTv.setText("get = " + result.toString());
+                    }})
+                .setErrorCallback(new ErrorCallback() {
+                    @Override
+                    public void error(String errorMsg) {
+                        contentTv.setText("请求失败");
+                    }})
+                .get();
+    }
+
+    public void getXMLList(){
+        // 参数
+        Map<String,Object> params = new HashMap<>();
+        params.put("userID","100007");
+        params.put("sessionID","1");
+
+        EasyHttp.getBuilder()
+                .setUrl("http://122.224.205.147:8008/GCPServer.asmx/ListNewTasks")
+                .setParams(params)
+                .setParseType(DataParser.PARSE_XML)
+                .setSuccessCallback(new SuccessCallback<XmlTask>() {
+                    @Override
+                    public void success(XmlTask result) {
+                        if(result != null && result.dataList != null){
+                            System.out.println(result.toString());
+                            for (com.liwy.test.xml.Data data : result.dataList){
+                                System.out.println(data.getCreateddate() + "-->" + data.getTaskname());
+                            }
+                            contentTv.setText("get = " + result.dataList.size());
+                        }else{
+                            contentTv.setText("get = 无数据");
+                        }
+
                     }})
                 .setErrorCallback(new ErrorCallback() {
                     @Override
