@@ -1,14 +1,22 @@
-EasyHttp 一个可扩展的Http框架
+EasyHttp 
 ===
 一、 引入项目
 ---
-compile 'com.liwy.easyhttp:easyhttp:1.0.6'
+compile 'com.liwy.easyhttp:easyhttp:1.0.7'
 
 二、 初始化
 ---
 在Application里初始化,主要初始化内容为统一解析回调和IHttpService实现类传入，具体如下：
 ```
-         // 默认已实现两种解析方式GSON和xml
+        // 实例化请求实现类
+         OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS).build();
+         RequestService requestService = new RequestService(okHttpClient);
+         // 设置EasyHttp的功能实现类为okHttpService，post提交方式为form表单，数据解析方式为GSON
+         EasyHttp.getInstance().initHttpService(requestService, Constants.MEDIA_TYPE_FORM,DataParser.PARSE_GSON);
+```
+如需自定义数据解析方式，需实现数据解析类的接口，并加入解析回调集合：
+```
+        // 默认已实现两种解析方式GSON和xml
          // 也可以自定义解析方式，比如解析html类型的数据
          DataParser.addCallback("html", new Callback() {
              @Override
@@ -21,13 +29,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
                  // http error
              }
          });
-        // 实例化请求实现类
-         OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS).build();
-         RequestService requestService = new RequestService(okHttpClient);
-         // 设置EasyHttp的功能实现类为okHttpService，post提交方式为form表单，数据解析方式为GSON
-         EasyHttp.getInstance().initHttpService(requestService, Constants.MEDIA_TYPE_FORM,DataParser.PARSE_GSON);
 ```
-
 
 三、 使用
 ---
@@ -47,8 +49,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
                       .setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData")
                       .setParams(params)
                       .setTag("testTag")
-                      .get()
-                      .setSync(false) 
+                      .setSync(true) //设置本次请求为同步,默认为异步请求.
                       .setSuccessCallback(new SuccessCallback<String>() {
                           @Override
                           public void success(String result) {
@@ -57,7 +58,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.6'
                           }
                        })
                       .build();
-              EasyHttp.getInstance().http(easyRequest);
+              EasyHttp.getInstance().get(easyRequest);
 ```
 参数也可不通过map直接传入，如下
 ```
@@ -67,7 +68,6 @@ EasyRequest easyRequest = EasyHttp.getBuilder()
                       .addParam("jsonKey", "test")
                       .setTag("testTag")
                       .setSync(false) 
-                      .get()
                       .setSuccessCallback(new SuccessCallback<String>() {
                           @Override
                           public void success(String result) {
@@ -315,6 +315,16 @@ EasyRequest easyRequest = EasyHttp.getBuilder()
         public Builder setDownloadCallback(DownloadCallback downloadCallback);
 ```
 
+EasyRequest.Builder使用注意
+---
+1. EasyRequest.Builder里除了setUrl是必须的外，其余方法均根据具体情况选择性调用。
+2. 如果需自定义post的请求体，需调用requestBody()；如果调用了此方法则不需再调用setParam和setMediaType
+3. 如需使当前请求为同步请求，需调用sync(true)
+4. addParam和setParams并不冲突，可同时调用，不会覆盖已传入参数。addHeader和setHeaders同理。
+5. 如果需要在网络请求中取消请求，需提前调用setTag()设置tag值，可通过调用EasyHttp.getInstance().cancelHttp(tag)取消请求。
+6. download方法，如果存储路径已存在该文件，则直接进入下载成功的回调。
+7. 目前数据解析已实现xml和gson两种方式。可通过setParseType("xml")主动设置本次请求的解析方式。
+8. 如果设置为同步请求则需在子线程里发起，目前同步请求尚不完善，不可用。（待完善）
 
 更新日志
 ---
@@ -323,7 +333,7 @@ EasyRequest easyRequest = EasyHttp.getBuilder()
 1. 自定义EasyRequest请求体
 2. 删除OkHttpService和HttpProxyService
 
-1.0.6（最新）
+1.0.6
 ---
 1. 实现泛型类的自定义解析，解除对GSON的依赖
 2. 取消EasyHttp对IHttpService的实现，采用HttpProxyService代理类实现功能
