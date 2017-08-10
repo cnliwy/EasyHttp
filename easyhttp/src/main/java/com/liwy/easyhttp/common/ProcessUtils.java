@@ -1,5 +1,7 @@
 package com.liwy.easyhttp.common;
 
+import android.support.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,5 +75,14 @@ public class ProcessUtils {
             sb.deleteCharAt(sb.length()-1);
         }
         return sb.toString();
+    }
+
+    /**
+     * @param url
+     * @return
+     * 从下载连接中解析出文件名
+     */
+    public static String getNameFromUrl(String url) {
+        return url.substring(url.lastIndexOf("/") + 1);
     }
 }

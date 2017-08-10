@@ -50,7 +50,12 @@ public class OkHttpService extends AbHttpService {
     }
 
     @Override
-    public <T> void http(EasyRequest req) {
+    public <T> void get(EasyRequest req) {
+
+    }
+
+    @Override
+    public <T> void post(EasyRequest req) {
 
     }
 
@@ -300,7 +305,7 @@ public class OkHttpService extends AbHttpService {
                         mainThread.execute(new Runnable() {
                             @Override
                             public void run() {
-                                if (downloadCallback != null)downloadCallback.onProgress(total, finalCurrent);
+                                if (downloadCallback != null)downloadCallback.onProgress(total, (int)finalCurrent);
                             }
                         });
 

@@ -7,5 +7,5 @@ package com.liwy.easyhttp.callback;
 public interface DownloadCallback<T> {
     public void onSuccess(T t);
     public void onError(String err);
-    public void onProgress(long total,long current);
+    public void onProgress(long total,int progress);
 }

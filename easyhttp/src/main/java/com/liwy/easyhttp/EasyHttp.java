@@ -52,8 +52,13 @@ public class EasyHttp  implements IHttpService{
     }
 
     @Override
-    public <T> void http(EasyRequest req) {
-        if (httpService != null)httpService.http(req);
+    public <T> void get(EasyRequest req) {
+        if (httpService != null)httpService.get(req);
+    }
+
+    @Override
+    public <T> void post(EasyRequest req) {
+        if (httpService != null)httpService.post(req);
     }
 
     @Override
@@ -79,7 +84,7 @@ public class EasyHttp  implements IHttpService{
      */
     public EasyHttp initHttpService(IHttpService httpService,int mediaType,String parseType) {
         this.httpService = httpService;
-        Constants.defaultPostType = mediaType;
+        Constants.defaultMediaType = mediaType;
         if(parseType != null && !"".equals(parseType) && DataParser.getCallbackMap().get(parseType) != null)DataParser.setDefaultParseType(parseType);
         return this;
     }

@@ -15,7 +15,8 @@ import java.util.Map;
  */
 
 public interface IHttpService {
-    public <T> void http(final EasyRequest req);
+    public <T> void get(final EasyRequest req);
+    public <T> void post(final EasyRequest req);
     public <T> void download(final EasyRequest req);
     public <T> void upload(final EasyRequest req);
 
