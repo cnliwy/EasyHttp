@@ -57,59 +57,59 @@ public class NextActivity extends AppCompatActivity {
 
     public void download(){
 //        String url = "http://img5q.duitang.com/uploads/item/201506/23/20150623203928_HzBWU.jpeg";
-        String url = "item/201506/23/20150623203928_HzBWU.jpeg";
-        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/aliwy";
-        String fileName = "20150623203928_HzBWU.jpeg";
-        System.out.println("save path :" + filePath);
-        EasyHttp.getBuilder()
-                .setFileUrl(url)
-                .setFileName(fileName)
-                .setTag("download")
-                .setFilePath(filePath)
-                .setDownloadCallback(new DownloadCallback<File>() {
-                    @Override
-                    public void onSuccess(File o) {
-                        System.out.println("---->下载成功" + o.getAbsolutePath());
-                    }
-
-                    @Override
-                    public void onError(String err) {
-                        System.out.println("---->下载失败");
-                    }
-
-                    @Override
-                    public void onProgress(long total, long current) {
-                        System.out.println("---->total=" + total + ",current=" + current);
-                    }
-                })
-                .download();
+//        String url = "item/201506/23/20150623203928_HzBWU.jpeg";
+//        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/aliwy";
+//        String fileName = "20150623203928_HzBWU.jpeg";
+//        System.out.println("save path :" + filePath);
+//        EasyHttp.getBuilder()
+//                .setFileUrl(url)
+//                .setFileName(fileName)
+//                .setTag("download")
+//                .setFilePath(filePath)
+//                .setDownloadCallback(new DownloadCallback<File>() {
+//                    @Override
+//                    public void onSuccess(File o) {
+//                        System.out.println("---->下载成功" + o.getAbsolutePath());
+//                    }
+//
+//                    @Override
+//                    public void onError(String err) {
+//                        System.out.println("---->下载失败");
+//                    }
+//
+//                    @Override
+//                    public void onProgress(long total, long current) {
+//                        System.out.println("---->total=" + total + ",current=" + current);
+//                    }
+//                })
+//                .download();
     }
     // upload files
     public void upload(){
-        String url = "http://192.168.131.19:8886/login/upload";
-        // 参数
-        Map<String,Object> params = new HashMap<>();
-        params.put("title","upload head icon and apk");
-        params.put("uploadUser","cnliwy");
-        params.put("uploadType","image and apk");
-
-        List<EasyFile> files = getFiles();
-
-        EasyHttp.getBuilder().setUrl(url).setParams(params).setFiles(files).setSuccessCallback(new SuccessCallback<String>() {
-            @Override
-            public void success(String result) {
-                List<Data> type = new ArrayList<Data>();
-                List<Data> list = new Gson().fromJson(result,type.getClass());
-                System.out.println("上传成功，" + result);
-                contentTv.setText("上传成功，" + result);
-            }
-        }).setErrorCallback(new ErrorCallback() {
-            @Override
-            public void error(String errorMsg) {
-                System.out.println(errorMsg);
-                contentTv.setText("上传失败"+ errorMsg);
-            }
-        }).postFile();
+//        String url = "http://192.168.131.19:8886/login/upload";
+//        // 参数
+//        Map<String,Object> params = new HashMap<>();
+//        params.put("title","upload head icon and apk");
+//        params.put("uploadUser","cnliwy");
+//        params.put("uploadType","image and apk");
+//
+//        List<EasyFile> files = getFiles();
+//
+//        EasyHttp.getBuilder().setUrl(url).setParams(params).setFiles(files).setSuccessCallback(new SuccessCallback<String>() {
+//            @Override
+//            public void success(String result) {
+//                List<Data> type = new ArrayList<Data>();
+//                List<Data> list = new Gson().fromJson(result,type.getClass());
+//                System.out.println("上传成功，" + result);
+//                contentTv.setText("上传成功，" + result);
+//            }
+//        }).setErrorCallback(new ErrorCallback() {
+//            @Override
+//            public void error(String errorMsg) {
+//                System.out.println(errorMsg);
+//                contentTv.setText("上传失败"+ errorMsg);
+//            }
+//        }).postFile();
     }
 
     // 需要上传的文件

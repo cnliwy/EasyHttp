@@ -1,7 +1,11 @@
 package com.liwy.easyhttp.service;
 
+import com.liwy.easyhttp.common.MainThread;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.OkHttpClient;
 
 /**
  * 可取消缓存的网络请求抽象类
@@ -10,6 +14,9 @@ import java.util.Map;
  */
 
 public abstract class AbHttpService implements IHttpService {
+    public OkHttpClient okHttpClient;
+    protected MainThread mainThread = new MainThread();
+
     protected Map<Object, Object> calls = new HashMap<>();
 
     /**
@@ -17,7 +24,7 @@ public abstract class AbHttpService implements IHttpService {
      * @param tag
      * @param call Call
      */
-    protected void addCall(Object tag,Object call){
+    public void addCall(Object tag,Object call){
         if (tag != null && call != null)calls.put(tag, call);
     }
 

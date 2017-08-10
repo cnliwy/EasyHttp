@@ -3,6 +3,7 @@ package com.liwy.easyhttp.impl;
 
 import android.util.Log;
 
+import com.liwy.easyhttp.common.EasyRequest;
 import com.liwy.easyhttp.service.AbHttpService;
 import com.liwy.easyhttp.common.Constants;
 import com.liwy.easyhttp.common.EasyFile;
@@ -34,6 +35,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.R.attr.tag;
 import static android.content.ContentValues.TAG;
 
 
@@ -42,18 +44,72 @@ import static android.content.ContentValues.TAG;
  */
 
 public class OkHttpService extends AbHttpService {
-    public OkHttpClient okHttpClient;
-    private MainThread mainThread = new MainThread();
-
-
 
     public OkHttpService(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
     }
 
+    @Override
+    public <T> void http(EasyRequest req) {
 
+    }
 
     @Override
+    public <T> void download(EasyRequest req) {
+
+    }
+
+    @Override
+    public <T> void upload(EasyRequest req) {
+
+    }
+
+    /**
+     * 自定义请求
+     * @param okHttpClient
+     * @param requestBody
+     * @param request
+     * @param tag
+     * @param parseType
+     * @param successCallback
+     * @param errorCallback
+     * @param <T>
+     */
+    public <T> void customRequest(OkHttpClient okHttpClient, RequestBody requestBody, Request request, final String tag, final String parseType, final SuccessCallback<T> successCallback, final ErrorCallback errorCallback){
+        Call call = okHttpClient.newCall(request);
+        addCall(tag,call);
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                removeCall(tag);
+                mainThread.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        String type = "";
+                        if (parseType != null && !"".equals(parseType))type = parseType;
+                        else type = DataParser.getDefaultParseType();
+                        DataParser.getCallbackMap().get(type).onError(e.toString(),errorCallback);
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                removeCall(tag);
+                final String content = response.body().string();
+                mainThread.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        String type = "";
+                        if (parseType != null && !"".equals(parseType))type = parseType;
+                        else type = DataParser.getDefaultParseType();
+                        DataParser.getCallbackMap().get(type).onSuccess(content,successCallback);
+                    }
+                });
+            }
+        });
+    }
+
     public <T> void get(String url, Map<String, Object> params, final Object tag, final String parseType,final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         String realUrl = makeGetUrl(url,params);//generate get url
 
@@ -95,10 +151,9 @@ public class OkHttpService extends AbHttpService {
 
     private static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
 
-    @Override
     public <T> void post(String url, Map<String, Object> params, final Object tag, final String parseType,final int contentType,  final SuccessCallback<T> successCallback, final ErrorCallback errorCallback) {
         RequestBody formBody;
-        if (contentType == Constants.CONTENT_TYPE_JSON){
+        if (contentType == Constants.MEDIA_TYPE_JSON){
             String content = map2json(params);
             formBody = RequestBody.create(JSON,content);
         }else{
@@ -203,7 +258,6 @@ public class OkHttpService extends AbHttpService {
         });
     }
 
-    @Override
     public <T> void download(String fileUrl, String destFileDir, String fileName, final Object tag, final DownloadCallback<T> downloadCallback) {
         if (fileName == null || "".equals(fileName))fileName = fileUrl;
         final File file = new File(destFileDir, fileName);
@@ -296,7 +350,6 @@ public class OkHttpService extends AbHttpService {
             calls.remove(tag);
         }
     }
-
     /**
      * convert map to json string
      * @param params

@@ -1,7 +1,5 @@
 package com.liwy.easyhttp.callback;
 
-import com.google.gson.internal.$Gson$Types;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -9,7 +7,7 @@ import java.lang.reflect.Type;
  * Created by liwy on 2017/6/5.
  */
 
-public abstract class SuccessCallback<T> implements SuccessListener<T>{
+public abstract class SuccessCallback<T> implements BaseSuccessListener<T> {
     public Class<? super T> rawType;// T generic type
     public Type mType;//T type
     public SuccessCallback() {

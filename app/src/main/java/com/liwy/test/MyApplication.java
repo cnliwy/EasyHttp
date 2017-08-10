@@ -3,12 +3,13 @@ package com.liwy.test;
 import android.app.Application;
 
 import com.liwy.easyhttp.EasyHttp;
-import com.liwy.easyhttp.callback.Callback;
+import com.liwy.easyhttp.callback.DataProcessor;
 import com.liwy.easyhttp.DataParse.DataParser;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.easyhttp.common.Constants;
 import com.liwy.easyhttp.impl.OkHttpService;
+import com.liwy.easyhttp.impl.RequestService;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +32,7 @@ public class MyApplication extends Application {
      */
     public void initOkHttpService() {
         // 自定义解析方式，比如解析html类型的数据
-        DataParser.addCallback("html", new Callback() {
+        DataParser.addCallback("html", new DataProcessor() {
             @Override
             public void onSuccess(String result,SuccessCallback successCallback) {
                 // do parsing which you want to
@@ -44,8 +45,9 @@ public class MyApplication extends Application {
         });
         // 实例化请求实现类
         OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS).build();
-        OkHttpService okHttpService = new OkHttpService(okHttpClient);
+//        OkHttpService okHttpService = new OkHttpService(okHttpClient);
+        RequestService requestService = new RequestService(okHttpClient);
         // 设置EasyHttp的功能实现类为okHttpService，post提交方式为form表单，数据解析方式为GSON
-        EasyHttp.getInstance().initHttpService(okHttpService, Constants.CONTENT_TYPE_FORM,DataParser.PARSE_GSON);
+        EasyHttp.getInstance().initHttpService(requestService, Constants.MEDIA_TYPE_FORM,DataParser.PARSE_GSON);
     }
 }

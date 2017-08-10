@@ -3,7 +3,7 @@ package com.liwy.easyhttp.DataParse;
 import android.util.Xml;
 
 import com.google.gson.Gson;
-import com.liwy.easyhttp.callback.Callback;
+import com.liwy.easyhttp.callback.DataProcessor;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 
@@ -27,12 +27,12 @@ public class DataParser {
     public final static String PARSE_GSON = "gson";
     public final static String PARSE_XML = "xml";
 
-    private static Map<String, Callback> callbackMap = new HashMap<>();
+    private static Map<String, DataProcessor> callbackMap = new HashMap<>();
     private static String defaultParseType = PARSE_GSON;
     // 实现默认的两种解析方式（GSON和XML）
     static {
         // 添加GSON解析
-        DataParser.addCallback(DataParser.PARSE_GSON,new Callback() {
+        DataParser.addCallback(DataParser.PARSE_GSON,new DataProcessor() {
             @Override
             public void onSuccess(String result,SuccessCallback successCallback) {
                 if (successCallback != null){
@@ -55,7 +55,7 @@ public class DataParser {
             }
         });
         // 添加xml解析
-        DataParser.addCallback(DataParser.PARSE_XML, new Callback() {
+        DataParser.addCallback(DataParser.PARSE_XML, new DataProcessor() {
             @Override
             public void onSuccess(String result, SuccessCallback successCallback) {
                 if (successCallback != null){
@@ -75,7 +75,7 @@ public class DataParser {
         });
     }
 
-    public static Map<String, Callback> getCallbackMap() {
+    public static Map<String, DataProcessor> getCallbackMap() {
         return callbackMap;
     }
 
@@ -84,12 +84,12 @@ public class DataParser {
     }
 
     /**
-     * add the callback to map
+     * add the dataProcessor to map
      * @param typekey   a alias of data parse
-     * @param callback
+     * @param dataProcessor
      */
-    public static void addCallback(String typekey,com.liwy.easyhttp.callback.Callback callback) {
-        callbackMap.put(typekey,callback);
+    public static void addCallback(String typekey,DataProcessor dataProcessor) {
+        callbackMap.put(typekey, dataProcessor);
     }
 
     public static void remove(String key){
