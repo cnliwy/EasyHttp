@@ -275,6 +275,8 @@ public class RequestService implements IHttpService{
                     requestBody = RequestBody.create(JSON,content);
                 }else if ("form".equals(req.getMediaType())){
                     requestBody = ProcessUtils.map2form(req.getParams());
+                }else{
+                    throw new NullPointerException("当前无"+ req.getMediaType() + "此类型的post提交");
                 }
             }else{
                 if ( Constants.defaultMediaType == Constants.MEDIA_TYPE_JSON){
@@ -341,10 +343,10 @@ public class RequestService implements IHttpService{
                 final Response response = call.execute();
                 removeCall(req.getTag());
                 if (response != null && response.isSuccessful()){
-                    DataParser.getCallbackMap().get(parseType).onError("网络请求失败",req.getErrorCallback());
-                }else{
                     final String content = response.body().string();
                     DataParser.getCallbackMap().get(type).onSuccess(content,req.getSuccessCallback());
+                }else{
+                    DataParser.getCallbackMap().get(parseType).onError("网络请求失败",req.getErrorCallback());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

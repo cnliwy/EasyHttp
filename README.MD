@@ -320,14 +320,19 @@ EasyRequest.Builder使用注意
 1. EasyRequest.Builder里除了setUrl是必须的外，其余方法均根据具体情况选择性调用。
 2. 如果需自定义post的请求体，需调用requestBody()；如果调用了此方法则不需再调用setParam和setMediaType
 3. 如需使当前请求为同步请求，需调用sync(true)
-4. addParam和setParams并不冲突，可同时调用，不会覆盖已传入参数。addHeader和setHeaders同理。
+4. addParam和setParams并不冲突，可同时调用，不会覆盖已传入数据。addHeader和setHeaders同理。
 5. 如果需要在网络请求中取消请求，需提前调用setTag()设置tag值，可通过调用EasyHttp.getInstance().cancelHttp(tag)取消请求。
 6. download方法，如果存储路径已存在该文件，则直接进入下载成功的回调。
 7. 目前数据解析已实现xml和gson两种方式。可通过setParseType("xml")主动设置本次请求的解析方式。
-8. 如果设置为同步请求则需在子线程里发起，目前同步请求尚不完善，不可用。（待完善）
+8. 如果设置为同步请求则需在子线程里发起（主线程不允许同步请求）。请求所在的线程里的方法均为同步。
 
 更新日志
 ---
+1.0.8(下版本)
+---
+1. 完善同步请求
+2. 优化上传方法
+
 1.0.7(最新)
 ---
 1. 自定义EasyRequest请求体

@@ -31,6 +31,7 @@ import static com.liwy.easyhttp.common.EasyRequest.VALUE_POST;
 
 public class HttpActivity extends AppCompatActivity implements View.OnClickListener {
     TextView tvContent;
+    Button syncBtn;
     Button getBtn;
     Button postBtn;
     Button downloadBtn;
@@ -43,15 +44,14 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_http);
-//        OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS).build();
-//        httpService = new RequestService(okHttpClient);
-//        EasyHttp.getInstance().initHttpService(httpService,0,PARSE_GSON);
         tvContent = (TextView)findViewById(R.id.tv_content);
         getBtn = (Button)findViewById(R.id.btn_get);
+        syncBtn = (Button)findViewById(R.id.btn_sync);
         postBtn = (Button)findViewById(R.id.btn_post);
         downloadBtn = (Button)findViewById(R.id.btn_download);
         uploadBtn = (Button)findViewById(R.id.btn_upload);
         cancelBtn = (Button)findViewById(R.id.btn_cancel);
+        syncBtn.setOnClickListener(this);
         getBtn.setOnClickListener(this);
         postBtn.setOnClickListener(this);
         downloadBtn.setOnClickListener(this);
@@ -62,6 +62,9 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.btn_sync:
+                syncHttp();
+                break;
             case R.id.btn_get:
                 get();
                 break;
@@ -80,6 +83,32 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void syncHttp(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 参数
+                Map<String, Object> params = new HashMap<>();
+                params.put("identity", "40283c825d2bca81015d2bcabe850000");//debug
+                params.put("jsonKey", "test");
+                System.out.println("请求开始");
+                final EasyRequest easyRequest = getBuilder()
+                        .setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData")
+                        .setParams(params)
+                        .setSync(true)
+                        .setSuccessCallback(new SuccessCallback<String>() {
+                            @Override
+                            public void success(String result) {
+                                System.out.println(result);
+                            }
+                        })
+                        .build();
+                EasyHttp.getInstance().get(easyRequest);
+                System.out.println("请求完成");
+            }
+        }).start();
+
+    }
     /**
      * 下载
      */
@@ -160,6 +189,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void post(){
+        System.out.println("请求开始");
         EasyRequest easyRequest = getBuilder()
                 .setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData")
                 .addParam("identity", "40283c825d2bca81015d2bcabe850000")
@@ -181,6 +211,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                 })
                 .build();
         EasyHttp.getInstance().post(easyRequest);
+        System.out.println("请求完成");
     }
 
     /**
