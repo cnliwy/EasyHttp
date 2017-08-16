@@ -7,16 +7,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.callback.DownloadCallback;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.common.EasyFile;
 import com.liwy.easyhttp.common.EasyRequest;
 import com.liwy.easyhttp.common.ProcessUtils;
 import com.liwy.easyhttp.impl.RequestService;
 import com.liwy.test.bean.Data;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +27,11 @@ import java.util.Map;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
-import static com.liwy.easyhttp.DataParse.DataParser.PARSE_GSON;
 import static com.liwy.easyhttp.EasyHttp.getBuilder;
-import static com.liwy.easyhttp.common.EasyRequest.VALUE_POST;
 
 
 public class HttpActivity extends AppCompatActivity implements View.OnClickListener {
+    String filePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/easyhttp/";
     TextView tvContent;
     Button syncBtn;
     Button getBtn;
@@ -37,13 +39,14 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
     Button downloadBtn;
     Button uploadBtn;
     Button cancelBtn;
-    RequestService httpService;
     String tag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_http);
+        File path = new File(filePath);
+        if (!path.exists())path.mkdir();
         tvContent = (TextView)findViewById(R.id.tv_content);
         getBtn = (Button)findViewById(R.id.btn_get);
         syncBtn = (Button)findViewById(R.id.btn_sync);
@@ -75,12 +78,49 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                 download();
                 break;
             case R.id.btn_upload:
-                customerRequestBody();
+                upload();
                 break;
             case R.id.btn_cancel:
                 EasyHttp.getInstance().cancelHttp(tag);
                 break;
         }
+    }
+    public void upload(){
+        String url = "http://192.168.131.19:8080/cnliwy/appdata/uploadFile";
+        // 参数
+        Map<String,Object> params = new HashMap<>();
+        params.put("title","upload head icon and apk");
+        params.put("uploader","cnliwy");
+        params.put("uploadType","image and apk");
+
+        List<EasyFile> files = getFiles();
+
+        EasyRequest request = EasyHttp.getBuilder().setUrl(url).setParams(params).setUploadFiles(files).setSuccessCallback(new SuccessCallback<String>() {
+            @Override
+            public void success(String result) {
+//                List<Data> type = new ArrayList<Data>();
+//                List<Data> list = new Gson().fromJson(result,type.getClass());
+                System.out.println("进入成功回调，" + result);
+                tvContent.setText("上传成功？");
+            }
+        }).setErrorCallback(new ErrorCallback() {
+            @Override
+            public void error(String errorMsg) {
+                System.out.println(errorMsg);
+                tvContent.setText("上传失败"+ errorMsg);
+            }
+        }).build();
+        EasyHttp.getInstance().upload(request);
+    }
+
+    // 需要上传的文件
+    public List<EasyFile> getFiles(){
+        List<EasyFile> files = new ArrayList<>();
+//        files.add(new EasyFile("fil2",filePath + "test1.apk","application/vnd.android.package-archive",new File(filePath + "test.apk")));
+//        files.add(new EasyFile("image1",filePath + "easy.jpeg","image/png",new File(filePath + "easy.jpeg")));
+        files.add(new EasyFile("image2",filePath + "head.jpg","image/png",new File(filePath + "head.jpg")));
+        files.add(new EasyFile("bgimg",filePath + "code.png","image/png",new File(filePath + "code.png")));
+        return files;
     }
 
     public void syncHttp(){
@@ -115,7 +155,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
     public void download(){
         tag = "download";
         String url = "http://img5q.duitang.com/uploads/item/201506/23/20150623203928_HzBWU.jpeg";
-        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/img";
+
         String fileName = "moon.jpeg";
          EasyRequest easyRequest = getBuilder()
                 .setUrl(url)

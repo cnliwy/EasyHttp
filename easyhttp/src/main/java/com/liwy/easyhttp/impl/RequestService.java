@@ -76,13 +76,15 @@ public class RequestService implements IHttpService{
      */
     @Override
     public <T> void upload(final EasyRequest req){
+        String uploadMediaType = "application/octet-stream";
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         List<EasyFile> files = req.getUploadFiles();
         // add file
         for (int i = 0; i <files.size() ; i++) {
             EasyFile easyFile = files.get(i);
             File f = easyFile.getFile();
-            MediaType mediaType = MediaType.parse(easyFile.getMediaType());
+//            MediaType mediaType = MediaType.parse(easyFile.getMediaType());
+            MediaType mediaType = MediaType.parse(uploadMediaType);
             if (f!=null) {
                 if (easyFile.getFileName() == null || "".equals(easyFile.getFileName()))easyFile.setFileName(f.getName());
                 builder.addFormDataPart(easyFile.getRequestKey(), f.getName(), RequestBody.create(mediaType, f));
