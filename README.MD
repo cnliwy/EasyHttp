@@ -2,7 +2,7 @@ EasyHttp
 ===
 一、 引入项目
 ---
-compile 'com.liwy.easyhttp:easyhttp:1.0.7'
+compile 'com.liwy.easyhttp:easyhttp:1.0.8'
 
 二、 初始化
 ---
@@ -18,7 +18,7 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.7'
 ```
 EasyHttp.getInstance().addIntercepor(new Interceptor() {
             @Override
-            public boolean processSuccess(Object obj, SuccessCallback successCallback) {
+            public boolean processSuccess(Object obj) {
                 if (obj instanceof List){
                     System.out.println("-------------------->是的没错，确实是集合");
                     return true;//拦截下一步操作，不执行successCallback回调
@@ -27,7 +27,7 @@ EasyHttp.getInstance().addIntercepor(new Interceptor() {
             }
 
             @Override
-            public boolean processError(String error,ErrorCallback errorCallback) {
+            public boolean processError(String error) {
                 return false;
             }
         });

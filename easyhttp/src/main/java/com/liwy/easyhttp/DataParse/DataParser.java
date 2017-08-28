@@ -58,7 +58,8 @@ public class DataParser {
 
             @Override
             public void onError(String error, ErrorCallback errorCallback) {
-                if (errorCallback != null)errorCallback.error(error);
+//                if (errorCallback != null)errorCallback.error(error);
+                if (errorCallback != null)executeErrorInterceptor(error,errorCallback);
             }
         });
         // 添加xml解析
@@ -68,16 +69,19 @@ public class DataParser {
                 if (successCallback != null){
                     if (successCallback.rawType == String.class || successCallback.rawType == null){
                         if (successCallback != null)
-                            successCallback.success(result);
+//                            successCallback.success(result);
+                        executeSuccessInterceptor(result,successCallback);
                     }else{
-                        if (successCallback != null) successCallback.success(getXMLObject(convertToParseContent(result),successCallback.rawType));
+                        if (successCallback != null)
+                            executeSuccessInterceptor(getXMLObject(convertToParseContent(result),successCallback.rawType),successCallback);
+//                            successCallback.success(getXMLObject(convertToParseContent(result),successCallback.rawType));
                     }
                 }
             }
 
             @Override
             public void onError(String error, ErrorCallback errorCallback) {
-                if (errorCallback != null)errorCallback.error(error);
+                if (errorCallback != null)executeErrorInterceptor(error,errorCallback);
             }
         });
     }
@@ -106,8 +110,23 @@ public class DataParser {
     private static void executeSuccessInterceptor(Object obj,SuccessCallback successCallback){
         if (interceptors != null && interceptors.size() > 0){
             for (Interceptor interceptor : interceptors){
-                if (!interceptor.processSuccess(obj,successCallback)){
+                if (!interceptor.processSuccess(obj)){
                     successCallback.success(obj);
+                }
+            }
+        }
+    }
+
+    /**
+     * 请求失败后执行拦截器
+     * @param error
+     * @param errorCallback
+     */
+    private static void executeErrorInterceptor(String error,ErrorCallback errorCallback){
+        if (interceptors != null && interceptors.size() > 0){
+            for (Interceptor interceptor : interceptors){
+                if (!interceptor.processError(error)){
+                    errorCallback.error(error);
                 }
             }
         }

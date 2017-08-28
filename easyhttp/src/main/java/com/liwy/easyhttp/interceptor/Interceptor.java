@@ -12,11 +12,10 @@ public interface Interceptor {
     /**
      *
      * @param obj
-     * @param successCallback
      * @return true拦截，不继续往下执行。false 不拦截，执行成功回调
      */
-    public boolean processSuccess(Object obj,SuccessCallback successCallback);
+    public boolean processSuccess(Object obj);
 
 
-    public boolean processError(String error,ErrorCallback errorCallback);
+    public boolean processError(String error);
 }
