@@ -1,8 +1,5 @@
 package com.liwy.easyhttp.interceptor;
 
-import com.liwy.easyhttp.callback.ErrorCallback;
-import com.liwy.easyhttp.callback.SuccessCallback;
-
 /**
  * 拦截器
  * Created by liwy on 2017/8/10.
