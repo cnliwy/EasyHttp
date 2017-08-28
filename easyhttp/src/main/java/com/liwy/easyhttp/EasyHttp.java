@@ -1,8 +1,10 @@
 package com.liwy.easyhttp;
 
 import com.liwy.easyhttp.DataParse.DataParser;
+import com.liwy.easyhttp.callback.DataProcessor;
 import com.liwy.easyhttp.common.Constants;
 import com.liwy.easyhttp.common.EasyRequest;
+import com.liwy.easyhttp.interceptor.Interceptor;
 import com.liwy.easyhttp.service.IHttpService;
 
 /**
@@ -87,6 +89,19 @@ public class EasyHttp  implements IHttpService{
         Constants.defaultMediaType = mediaType;
         if(parseType != null && !"".equals(parseType) && DataParser.getCallbackMap().get(parseType) != null)DataParser.setDefaultParseType(parseType);
         return this;
+    }
+    // 新增自定义数据解析
+    public void addDataParse(String typekey,DataProcessor dataProcessor){
+        DataParser.addCallback(typekey,dataProcessor);
+    }
+    // 新增拦截器
+    public void addIntercepor(Interceptor interceptor){
+        DataParser.addInterceptor(interceptor);
+    }
+
+    // 删除拦截器
+    public  void removeInterceptor(Interceptor interceptor){
+        DataParser.removeInterceptor(interceptor);
     }
 
 //    public static class Builder{

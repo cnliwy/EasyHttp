@@ -14,21 +14,39 @@ compile 'com.liwy.easyhttp:easyhttp:1.0.7'
          // 设置EasyHttp的功能实现类为okHttpService，post提交方式为form表单，数据解析方式为GSON
          EasyHttp.getInstance().initHttpService(requestService, Constants.MEDIA_TYPE_FORM,DataParser.PARSE_GSON);
 ```
+如需在回调前对数据或业务进行自定义处理，可实现拦截器，如下;
+```
+EasyHttp.getInstance().addIntercepor(new Interceptor() {
+            @Override
+            public boolean processSuccess(Object obj, SuccessCallback successCallback) {
+                if (obj instanceof List){
+                    System.out.println("-------------------->是的没错，确实是集合");
+                    return true;//拦截下一步操作，不执行successCallback回调
+                }
+                return false;//不拦截，执行successCallback回调
+            }
+
+            @Override
+            public boolean processError(String error,ErrorCallback errorCallback) {
+                return false;
+            }
+        });
+```
 如需自定义数据解析方式，需实现数据解析类的接口，并加入解析回调集合：
 ```
         // 默认已实现两种解析方式GSON和xml
          // 也可以自定义解析方式，比如解析html类型的数据
-         DataParser.addCallback("html", new Callback() {
-             @Override
-             public void onSuccess(String result,SuccessCallback successCallback) {
-                 // do parsing which you want to
-             }
- 
-             @Override
-             public void onError(String error, ErrorCallback errorCallback) {
-                 // http error
-             }
-         });
+        EasyHttp.getInstance().addDataParse("html", new DataProcessor() {
+                    @Override
+                    public void onSuccess(String result,SuccessCallback successCallback) {
+                        // do parsing which you want to
+                    }
+        
+                    @Override
+                    public void onError(String error, ErrorCallback errorCallback) {
+                        // http error
+                    }
+                });
 ```
 
 三、 使用
@@ -328,12 +346,14 @@ EasyRequest.Builder使用注意
 
 更新日志
 ---
-1.0.8(下版本)
+1.0.8(最新)
 ---
 1. 完善同步请求
 2. 优化上传方法
+3. 新增拦截器，可在成功失败回调前进行自定义处理
+4. 框架的初始化操作全部调整在EasyHttp的实例里进行
 
-1.0.7(最新)
+1.0.7
 ---
 1. 自定义EasyRequest请求体
 2. 删除OkHttpService和HttpProxyService

@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.liwy.easyhttp.callback.DataProcessor;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.interceptor.Interceptor;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.convert.AnnotationStrategy;
@@ -16,7 +17,9 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +29,7 @@ import java.util.Map;
 public class DataParser {
     public final static String PARSE_GSON = "gson";
     public final static String PARSE_XML = "xml";
+    private static List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
     private static Map<String, DataProcessor> callbackMap = new HashMap<>();
     private static String defaultParseType = PARSE_GSON;
@@ -37,13 +41,16 @@ public class DataParser {
             public void onSuccess(String result,SuccessCallback successCallback) {
                 if (successCallback != null){
                     if (successCallback.mType == String.class || successCallback.mType == null){
-                        successCallback.success(result);
+//                        successCallback.success(result);
+                        executeSuccessInterceptor(result,successCallback);
                     }else{
                         try {
-                            successCallback.success(new Gson().fromJson(result,successCallback.mType));
+//                            successCallback.success(new Gson().fromJson(result,successCallback.mType));
+                            executeSuccessInterceptor(new Gson().fromJson(result,successCallback.mType),successCallback);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            successCallback.success(null);
+//                            successCallback.success(null);
+                            executeSuccessInterceptor(null,successCallback);
                         }
                     }
                 }
@@ -73,6 +80,37 @@ public class DataParser {
                 if (errorCallback != null)errorCallback.error(error);
             }
         });
+    }
+
+    /**
+     * 添加拦截器
+     * @param interceptor
+     */
+    public static void addInterceptor(Interceptor interceptor){
+        interceptors.add(interceptor);
+    }
+
+    /**
+     * 删除拦截器
+     * @param interceptor
+     */
+    public static void removeInterceptor(Interceptor interceptor){
+        interceptors.remove(interceptor);
+    }
+
+    /**
+     * 请求成功后执行拦截器
+     * @param obj
+     * @param successCallback
+     */
+    private static void executeSuccessInterceptor(Object obj,SuccessCallback successCallback){
+        if (interceptors != null && interceptors.size() > 0){
+            for (Interceptor interceptor : interceptors){
+                if (!interceptor.processSuccess(obj,successCallback)){
+                    successCallback.success(obj);
+                }
+            }
+        }
     }
 
     public static Map<String, DataProcessor> getCallbackMap() {
