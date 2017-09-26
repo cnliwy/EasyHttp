@@ -34,7 +34,7 @@ import okhttp3.Response;
  */
 
 public class RequestService implements IHttpService{
-    private final static String TAG = RequestService.class.getName();
+    private final static String TAG = "EasyHttp";
     //MediaType 这个需要和服务端保持一致
     private static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
@@ -346,6 +346,7 @@ public class RequestService implements IHttpService{
                 removeCall(req.getTag());
                 if (response != null && response.isSuccessful()){
                     final String content = response.body().string();
+                    if (req.isLog())Log.e(TAG, "success---->" + content );
                     DataParser.getCallbackMap().get(type).onSuccess(content,req.getSuccessCallback());
                 }else{
                     DataParser.getCallbackMap().get(parseType).onError("网络请求失败",req.getErrorCallback());
@@ -353,6 +354,7 @@ public class RequestService implements IHttpService{
             } catch (IOException e) {
                 e.printStackTrace();
                 removeCall(req.getTag());
+                if (req.isLog())Log.e(TAG, "error---->" + e.getMessage() );
                 DataParser.getCallbackMap().get(type).onError("网络请求失败",req.getErrorCallback());
             }
         }else{
@@ -361,6 +363,7 @@ public class RequestService implements IHttpService{
                 @Override
                 public void onFailure(Call call, final IOException e) {
                     removeCall(req.getTag());
+                    if (req.isLog())Log.e(TAG, "error---->" + e.getMessage() );
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -373,6 +376,7 @@ public class RequestService implements IHttpService{
                 public void onResponse(Call call, final Response response) throws IOException {
                     removeCall(req.getTag());
                     final String content = response.body().string();
+                    if (req.isLog())Log.e(TAG, "success---->" + content );
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {

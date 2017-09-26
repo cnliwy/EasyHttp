@@ -53,21 +53,21 @@ public class MyApplication extends Application {
         RequestService requestService = new RequestService(okHttpClient);
         // 设置EasyHttp的功能实现类为okHttpService，post提交方式为form表单，数据解析方式为GSON
         // 如果post提交数据的类型既不是form也不是json，则通过EasyRequest.Builder的requestBody()传入自定义的请求体
-        EasyHttp.getInstance().initHttpService(requestService, Constants.MEDIA_TYPE_FORM,DataParser.PARSE_GSON);
-        EasyHttp.getInstance().addIntercepor(new Interceptor() {
-            @Override
-            public boolean processSuccess(Object obj, SuccessCallback successCallback) {
-                if (obj instanceof List){
-                    System.out.println("-------------------->是的没错，确实是集合");
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean processError(String error,ErrorCallback errorCallback) {
-                return false;
-            }
-        });
+        EasyHttp.getInstance().initHttpService(requestService, Constants.MEDIA_TYPE_FORM,DataParser.PARSE_GSON).isLog(true);
+//        EasyHttp.getInstance().addIntercepor(new Interceptor() {
+//            @Override
+//            public boolean processSuccess(Object obj) {
+//                if (obj instanceof List){
+//                    System.out.println("-------------------->是的没错，确实是集合");
+//                    return true;
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean processError(String error) {
+//                return false;
+//            }
+//        });
     }
 }

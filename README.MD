@@ -2,7 +2,7 @@ EasyHttp
 ===
 一、 引入项目
 ---
-compile 'com.liwy.easyhttp:easyhttp:1.0.8'
+compile 'com.liwy.easyhttp:easyhttp:1.0.9'
 
 二、 初始化
 ---
@@ -228,6 +228,15 @@ EasyRequest easyRequest = EasyHttp.getBuilder()
         public Builder setOkHttpClient(OkHttpClient okHttpClient);
 
      
+             /**
+              * 是否打印日志
+              * @param log
+              * @return
+              */
+             public Builder isLog(boolean log) {
+                 isLog = log;
+                 return this;
+             }
 
         /**
          * 设置用于取消本次请求的tag
@@ -346,7 +355,13 @@ EasyRequest.Builder使用注意
 
 更新日志
 ---
-1.0.8(最新)
+1.0.9(最新)
+---
+1. 修复无拦截器时无法成功回调请求结果的bug。
+2. 新增请求日志打印，默认不打印,可通过EasyHttp的实例isLog(boolean)配置全局，也可以通过EasyRequest配置单次请求的行为。
+
+
+1.0.8
 ---
 1. 完善同步请求
 2. 优化上传方法

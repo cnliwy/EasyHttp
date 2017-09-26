@@ -1,6 +1,7 @@
 package com.liwy.easyhttp.common;
 
 /**
+ * 初始化类
  * Created by liwy on 2017/7/13.
  */
 
@@ -13,4 +14,6 @@ public class Constants {
     public static int defaultMediaType = 0;
     // 默认的数据解析方式
     public static String defaultParseType = "gson";
+    // 是否打印日志，默认不打印
+    public static boolean isLog = false;
 }

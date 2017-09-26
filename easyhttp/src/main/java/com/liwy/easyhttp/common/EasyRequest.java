@@ -34,6 +34,7 @@ public class EasyRequest<T> {
     List<EasyFile> uploadFiles;// 上传文件集合
     int requestType;//0post  1 get
     boolean isSync = true;//默认同步请求，false为异步请求
+    boolean isLog;//是否打印请求结果
 
     String parseType;// 解析类型
 
@@ -60,6 +61,7 @@ public class EasyRequest<T> {
         this.errorCallback = builder.errorCallback;
         this.downloadCallback = builder.downloadCallback;
         this.requestBody = builder.requestBody;
+        this.isLog = builder.isLog;
     }
 
     public Context getContext() {
@@ -118,6 +120,10 @@ public class EasyRequest<T> {
         return fileName;
     }
 
+    public boolean isLog() {
+        return isLog;
+    }
+
     public SuccessCallback<T> getSuccessCallback() {
         return successCallback;
     }
@@ -152,6 +158,7 @@ public class EasyRequest<T> {
         List<EasyFile> uploadFiles;// 上传文件集合
         int requestType;// 0 post  1 get 2 download
         boolean isSync;//默认异步请求，为true时是同步
+        boolean isLog = Constants.isLog;
 
         String parseType;// 解析类型
 
@@ -204,6 +211,16 @@ public class EasyRequest<T> {
          */
         public Builder setUrl(String url) {
             this.url = url;
+            return this;
+        }
+
+        /**
+         * 是否打印日志
+         * @param log
+         * @return
+         */
+        public Builder isLog(boolean log) {
+            isLog = log;
             return this;
         }
 

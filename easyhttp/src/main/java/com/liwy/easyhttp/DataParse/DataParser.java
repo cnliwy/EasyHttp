@@ -114,6 +114,8 @@ public class DataParser {
                     successCallback.success(obj);
                 }
             }
+        }else{
+            successCallback.success(obj);
         }
     }
 
@@ -129,6 +131,8 @@ public class DataParser {
                     errorCallback.error(error);
                 }
             }
+        }else{
+            errorCallback.error(error);
         }
     }
 
