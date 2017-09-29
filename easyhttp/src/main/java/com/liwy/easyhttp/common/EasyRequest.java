@@ -4,6 +4,7 @@ package com.liwy.easyhttp.common;
 import android.content.Context;
 
 import com.liwy.easyhttp.callback.DownloadCallback;
+import com.liwy.easyhttp.callback.EndCallBack;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 
@@ -35,6 +36,7 @@ public class EasyRequest<T> {
     int requestType;//0post  1 get
     boolean isSync = true;//默认同步请求，false为异步请求
     boolean isLog;//是否打印请求结果
+    boolean isIntercept;//是否执行拦截器，默认执行
 
     String parseType;// 解析类型
 
@@ -44,6 +46,8 @@ public class EasyRequest<T> {
     SuccessCallback<T> successCallback;
     ErrorCallback errorCallback;
     DownloadCallback<T> downloadCallback;
+    EndCallBack endCallBack;
+
 
     public EasyRequest(Builder builder) {
         this.okHttpClient = builder.okHttpClient;
@@ -62,6 +66,8 @@ public class EasyRequest<T> {
         this.downloadCallback = builder.downloadCallback;
         this.requestBody = builder.requestBody;
         this.isLog = builder.isLog;
+        this.isIntercept = builder.isIntercept;
+        this.endCallBack = builder.endCallBack;
     }
 
     public Context getContext() {
@@ -124,6 +130,10 @@ public class EasyRequest<T> {
         return isLog;
     }
 
+    public boolean isIntercept() {
+        return isIntercept;
+    }
+
     public SuccessCallback<T> getSuccessCallback() {
         return successCallback;
     }
@@ -134,6 +144,10 @@ public class EasyRequest<T> {
 
     public DownloadCallback<T> getDownloadCallback() {
         return downloadCallback;
+    }
+
+    public EndCallBack getEndCallBack() {
+        return endCallBack;
     }
 
     public RequestBody getRequestBody() {
@@ -159,6 +173,7 @@ public class EasyRequest<T> {
         int requestType;// 0 post  1 get 2 download
         boolean isSync;//默认异步请求，为true时是同步
         boolean isLog = Constants.isLog;
+        boolean isIntercept = Constants.isIntercept;//默认执行拦截器
 
         String parseType;// 解析类型
 
@@ -169,6 +184,7 @@ public class EasyRequest<T> {
         SuccessCallback successCallback;
         ErrorCallback errorCallback;
         DownloadCallback downloadCallback;
+        EndCallBack endCallBack;
 
         /**
          * 传入context对象
@@ -191,6 +207,16 @@ public class EasyRequest<T> {
             }else{
                 this.headers.putAll(headers);
             }
+            return this;
+        }
+
+        /**
+         * 设置请求结束回调
+         * @param endCallBack
+         * @return
+         */
+        public Builder setEndCallBack(EndCallBack endCallBack) {
+            this.endCallBack = endCallBack;
             return this;
         }
 
@@ -221,6 +247,16 @@ public class EasyRequest<T> {
          */
         public Builder isLog(boolean log) {
             isLog = log;
+            return this;
+        }
+
+        /**
+         * 是否执行拦截器，默认执行
+         * @param intercept
+         * @return
+         */
+        public Builder isIntercept(boolean intercept) {
+            isIntercept = intercept;
             return this;
         }
 

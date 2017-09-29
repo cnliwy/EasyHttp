@@ -355,10 +355,19 @@ EasyRequest.Builder使用注意
 
 更新日志
 ---
+1.1.0(待发布)
+---
+1. 解析失败更改为执行OnError回调，原执行OnSuccess
+2. 新增可选择拦截功能。通过全局设置EasyHttp.getInstance().isIntercept(boolean)和单个设置EasyRequest的isIntercept(boolean)选择是否拦截，其中EasyRequest.isIntercept()优先级较高
+3. 新增请求结束回调。无论成功或者失败均会执行此回调接口。
+4. 更改ErrorCallBack方法，onError(String error)->onError(Exception exception)
+5. 多拦截器拦截逻辑更改为只要有一个拦截器选择拦截（return true;）就不执行ErrorCallBack回调
+
+
 1.0.9(最新)
 ---
 1. 修复无拦截器时无法成功回调请求结果的bug。
-2. 新增请求日志打印，默认不打印,可通过EasyHttp的实例isLog(boolean)配置全局，也可以通过EasyRequest配置单次请求的行为。
+2. 新增请求日志打印，默认不打印,可通过EasyHttp.getInstance().isLog(boolean)配置全局，也可以通过EasyRequest的isLog()配置单次请求的行为。其中EasyRequest的isLog()优先级较高。
 
 
 1.0.8

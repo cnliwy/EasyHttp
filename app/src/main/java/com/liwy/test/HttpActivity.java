@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.callback.DownloadCallback;
+import com.liwy.easyhttp.callback.EndCallBack;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.easyhttp.common.EasyFile;
@@ -200,6 +201,18 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                         tvContent.setText(result);
                     }
                  })
+                .setErrorCallback(new ErrorCallback() {
+                    @Override
+                    public void error(String errorMsg) {
+                        System.out.println("错误回调：" + errorMsg);
+                    }
+                })
+                .setEndCallBack(new EndCallBack() {
+                    @Override
+                    public void onEnd() {
+                        System.out.println("请求结束了");
+                    }
+                })
                 .build();
         EasyHttp.getInstance().get(easyRequest);
     }

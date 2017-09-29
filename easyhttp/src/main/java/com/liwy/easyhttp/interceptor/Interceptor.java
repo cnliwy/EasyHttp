@@ -14,5 +14,6 @@ public interface Interceptor {
     public boolean processSuccess(Object obj);
 
 
-    public boolean processError(String error);
+//    public boolean processError(String error);
+    public boolean processError(Exception exception);
 }

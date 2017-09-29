@@ -115,7 +115,8 @@ public class RequestService implements IHttpService{
                         String type = "";
                         if (req.getParseType() != null && !"".equals(req.getParseType()))type = req.getParseType();
                         else type = DataParser.getDefaultParseType();
-                        DataParser.getCallbackMap().get(type).onError(e.toString(),req.getErrorCallback());
+//                        DataParser.getCallbackMap().get(type).onError(e.toString(),req.getErrorCallback());
+                        DataParser.getCallbackMap().get(type).onError(e,req);
                     }
                 });
             }
@@ -129,7 +130,8 @@ public class RequestService implements IHttpService{
                         String type = "";
                         if (req.getParseType() != null && !"".equals(req.getParseType()))type = req.getParseType();
                         else type = DataParser.getDefaultParseType();
-                        DataParser.getCallbackMap().get(type).onSuccess(content,req.getSuccessCallback());
+//                        DataParser.getCallbackMap().get(type).onSuccess(content,req.getSuccessCallback());
+                        DataParser.getCallbackMap().get(type).onSuccess(content,req);
                     }
                 });
             }
@@ -347,15 +349,21 @@ public class RequestService implements IHttpService{
                 if (response != null && response.isSuccessful()){
                     final String content = response.body().string();
                     if (req.isLog())Log.e(TAG, "success---->" + content );
-                    DataParser.getCallbackMap().get(type).onSuccess(content,req.getSuccessCallback());
+//                    DataParser.getCallbackMap().get(type).onSuccess(content,req.getSuccessCallback());
+                    DataParser.getCallbackMap().get(parseType).onSuccess(content,req);
                 }else{
-                    DataParser.getCallbackMap().get(parseType).onError("网络请求失败",req.getErrorCallback());
+//                    DataParser.getCallbackMap().get(parseType).onError("网络请求失败",req.getErrorCallback());
+                    NullPointerException exception = new NullPointerException("网络请求失败");
+                    DataParser.getCallbackMap().get(parseType).onError(exception,req);
                 }
+                if (req.getEndCallBack() != null)req.getEndCallBack().onEnd();
             } catch (IOException e) {
                 e.printStackTrace();
                 removeCall(req.getTag());
                 if (req.isLog())Log.e(TAG, "error---->" + e.getMessage() );
-                DataParser.getCallbackMap().get(type).onError("网络请求失败",req.getErrorCallback());
+//                DataParser.getCallbackMap().get(type).onError("网络请求失败",req.getErrorCallback());
+                DataParser.getCallbackMap().get(parseType).onError(e,req);
+                if (req.getEndCallBack() != null)req.getEndCallBack().onEnd();
             }
         }else{
             // 异步
@@ -367,7 +375,9 @@ public class RequestService implements IHttpService{
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
-                            DataParser.getCallbackMap().get(parseType).onError(e.toString(),req.getErrorCallback());
+//                            DataParser.getCallbackMap().get(parseType).onError(e.toString(),req.getErrorCallback());
+                            DataParser.getCallbackMap().get(parseType).onError(e,req);
+                            if (req.getEndCallBack() != null)req.getEndCallBack().onEnd();
                         }
                     });
                 }
@@ -380,7 +390,9 @@ public class RequestService implements IHttpService{
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
-                            DataParser.getCallbackMap().get(parseType).onSuccess(content,req.getSuccessCallback());
+//                            DataParser.getCallbackMap().get(parseType).onSuccess(content,req.getSuccessCallback());
+                            DataParser.getCallbackMap().get(parseType).onSuccess(content,req);
+                            if (req.getEndCallBack() != null)req.getEndCallBack().onEnd();
                         }
                     });
                 }

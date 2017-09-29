@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.liwy.easyhttp.callback.DataProcessor;
 import com.liwy.easyhttp.callback.ErrorCallback;
 import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.common.EasyRequest;
 import com.liwy.easyhttp.interceptor.Interceptor;
 
 import org.simpleframework.xml.Serializer;
@@ -38,50 +39,58 @@ public class DataParser {
         // 添加GSON解析
         DataParser.addCallback(DataParser.PARSE_GSON,new DataProcessor() {
             @Override
-            public void onSuccess(String result,SuccessCallback successCallback) {
+            public void onSuccess(String result,EasyRequest req) {
+                SuccessCallback successCallback = req.getSuccessCallback();
                 if (successCallback != null){
                     if (successCallback.mType == String.class || successCallback.mType == null){
-//                        successCallback.success(result);
-                        executeSuccessInterceptor(result,successCallback);
+                        executeSuccessInterceptor(result,successCallback,req.isIntercept());
                     }else{
                         try {
-//                            successCallback.success(new Gson().fromJson(result,successCallback.mType));
-                            executeSuccessInterceptor(new Gson().fromJson(result,successCallback.mType),successCallback);
+                            executeSuccessInterceptor(new Gson().fromJson(result,successCallback.mType),successCallback,req.isIntercept());
                         } catch (Exception e) {
                             e.printStackTrace();
-//                            successCallback.success(null);
-                            executeSuccessInterceptor(null,successCallback);
+//                            executeSuccessInterceptor(null,successCallback,req.isIntercept());
+                            // 解析失败应该调onError接口
+                            onError(e,req);
                         }
                     }
                 }
             }
 
             @Override
-            public void onError(String error, ErrorCallback errorCallback) {
-//                if (errorCallback != null)errorCallback.error(error);
-                if (errorCallback != null)executeErrorInterceptor(error,errorCallback);
+            public void onError(Exception e,EasyRequest req) {
+                ErrorCallback errorCallback = req.getErrorCallback();
+                String errorMsg = e.getMessage();
+                if (errorCallback != null)executeErrorInterceptor(e,errorCallback,req.isIntercept());
             }
         });
         // 添加xml解析
         DataParser.addCallback(DataParser.PARSE_XML, new DataProcessor() {
             @Override
-            public void onSuccess(String result, SuccessCallback successCallback) {
+            public void onSuccess(String result,EasyRequest req) {
+                SuccessCallback successCallback = req.getSuccessCallback();
                 if (successCallback != null){
                     if (successCallback.rawType == String.class || successCallback.rawType == null){
                         if (successCallback != null)
-//                            successCallback.success(result);
-                        executeSuccessInterceptor(result,successCallback);
+                        executeSuccessInterceptor(result,successCallback,req.isIntercept());
                     }else{
-                        if (successCallback != null)
-                            executeSuccessInterceptor(getXMLObject(convertToParseContent(result),successCallback.rawType),successCallback);
-//                            successCallback.success(getXMLObject(convertToParseContent(result),successCallback.rawType));
+                        if (successCallback != null){
+                            try {
+                                executeSuccessInterceptor(getXMLObject(convertToParseContent(result),successCallback.rawType),successCallback,req.isIntercept());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                onError(e,req);
+                            }
+                        }
                     }
                 }
             }
 
             @Override
-            public void onError(String error, ErrorCallback errorCallback) {
-                if (errorCallback != null)executeErrorInterceptor(error,errorCallback);
+            public void onError(Exception e,EasyRequest req) {
+                ErrorCallback errorCallback = req.getErrorCallback();
+                String errorMsg = e.getMessage();
+                if (errorCallback != null)executeErrorInterceptor(e,errorCallback,req.isIntercept());
             }
         });
     }
@@ -107,8 +116,8 @@ public class DataParser {
      * @param obj
      * @param successCallback
      */
-    private static void executeSuccessInterceptor(Object obj,SuccessCallback successCallback){
-        if (interceptors != null && interceptors.size() > 0){
+    private static void executeSuccessInterceptor(Object obj,SuccessCallback successCallback,boolean isIntercept){
+        if (interceptors != null && interceptors.size() > 0 && isIntercept){
             for (Interceptor interceptor : interceptors){
                 if (!interceptor.processSuccess(obj)){
                     successCallback.success(obj);
@@ -121,18 +130,21 @@ public class DataParser {
 
     /**
      * 请求失败后执行拦截器
-     * @param error
+//     * @param error
      * @param errorCallback
      */
-    private static void executeErrorInterceptor(String error,ErrorCallback errorCallback){
-        if (interceptors != null && interceptors.size() > 0){
+    private static void executeErrorInterceptor(Exception exception,ErrorCallback errorCallback,boolean isIntercept){
+        if (interceptors != null && interceptors.size() > 0 && isIntercept){
+            boolean intercepted = false;
             for (Interceptor interceptor : interceptors){
-                if (!interceptor.processError(error)){
-                    errorCallback.error(error);
+                // 有一个拦截的就不执行errorCallback回调
+                if (interceptor.processError(exception)){
+                    intercepted = true;
                 }
             }
+            if (!intercepted)errorCallback.error(exception.getMessage());
         }else{
-            errorCallback.error(error);
+            errorCallback.error(exception.getMessage());
         }
     }
 

@@ -101,6 +101,16 @@ public class EasyHttp  implements IHttpService{
         return this;
     }
 
+    /**
+     * 初始化是否执行拦截器
+     * @param isIntercept
+     * @return
+     */
+    public EasyHttp isIntercept(boolean isIntercept){
+        Constants.isIntercept = isIntercept;
+        return this;
+    }
+
     // 新增自定义数据解析
     public void addDataParse(String typekey,DataProcessor dataProcessor){
         DataParser.addCallback(typekey,dataProcessor);
