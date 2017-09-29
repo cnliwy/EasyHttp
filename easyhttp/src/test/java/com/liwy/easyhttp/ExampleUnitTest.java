@@ -1,6 +1,6 @@
 package com.liwy.easyhttp;
 
-import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.callback.OnSuccessCallback;
 
 import org.junit.Test;
 
@@ -23,13 +23,13 @@ public class ExampleUnitTest {
 
     @Test
     public void testType(){
-        SuccessCallback<List<ResponseBody>> successCallback = new SuccessCallback<List<ResponseBody>>() {
+        OnSuccessCallback<List<ResponseBody>> onSuccessCallback = new OnSuccessCallback<List<ResponseBody>>() {
             @Override
             public void success(List<ResponseBody> result) {
 
             }
         };
-        System.out.println(successCallback.rawType);
-        System.out.println(successCallback.mType);
+        System.out.println(onSuccessCallback.rawType);
+        System.out.println(onSuccessCallback.mType);
     }
 }

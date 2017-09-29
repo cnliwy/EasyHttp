@@ -3,10 +3,10 @@ package com.liwy.easyhttp.common;
 
 import android.content.Context;
 
-import com.liwy.easyhttp.callback.DownloadCallback;
-import com.liwy.easyhttp.callback.EndCallBack;
-import com.liwy.easyhttp.callback.ErrorCallback;
-import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.callback.OnDownloadCallback;
+import com.liwy.easyhttp.callback.OnEndCallback;
+import com.liwy.easyhttp.callback.OnErrorCallback;
+import com.liwy.easyhttp.callback.OnSuccessCallback;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,10 +43,10 @@ public class EasyRequest<T> {
     String saveDir;// 文件存储路径
     String fileName;    // 文件存储名称
 
-    SuccessCallback<T> successCallback;
-    ErrorCallback errorCallback;
-    DownloadCallback<T> downloadCallback;
-    EndCallBack endCallBack;
+    OnSuccessCallback<T> onSuccessCallback;
+    OnErrorCallback onErrorCallback;
+    OnDownloadCallback<T> onDownloadCallback;
+    OnEndCallback onEndCallback;
 
 
     public EasyRequest(Builder builder) {
@@ -61,13 +61,13 @@ public class EasyRequest<T> {
         this.isSync = builder.isSync;
         this.saveDir = builder.saveDir;
         this.fileName = builder.fileName;
-        this.successCallback = builder.successCallback;
-        this.errorCallback = builder.errorCallback;
-        this.downloadCallback = builder.downloadCallback;
+        this.onSuccessCallback = builder.onSuccessCallback;
+        this.onErrorCallback = builder.onErrorCallback;
+        this.onDownloadCallback = builder.onDownloadCallback;
         this.requestBody = builder.requestBody;
         this.isLog = builder.isLog;
         this.isIntercept = builder.isIntercept;
-        this.endCallBack = builder.endCallBack;
+        this.onEndCallback = builder.onEndCallback;
     }
 
     public Context getContext() {
@@ -134,20 +134,20 @@ public class EasyRequest<T> {
         return isIntercept;
     }
 
-    public SuccessCallback<T> getSuccessCallback() {
-        return successCallback;
+    public OnSuccessCallback<T> getOnSuccessCallback() {
+        return onSuccessCallback;
     }
 
-    public ErrorCallback getErrorCallback() {
-        return errorCallback;
+    public OnErrorCallback getOnErrorCallback() {
+        return onErrorCallback;
     }
 
-    public DownloadCallback<T> getDownloadCallback() {
-        return downloadCallback;
+    public OnDownloadCallback<T> getOnDownloadCallback() {
+        return onDownloadCallback;
     }
 
-    public EndCallBack getEndCallBack() {
-        return endCallBack;
+    public OnEndCallback getOnEndCallback() {
+        return onEndCallback;
     }
 
     public RequestBody getRequestBody() {
@@ -181,10 +181,10 @@ public class EasyRequest<T> {
         String fileName;    // 文件存储名称
 
        // 请求结果回调
-        SuccessCallback successCallback;
-        ErrorCallback errorCallback;
-        DownloadCallback downloadCallback;
-        EndCallBack endCallBack;
+        OnSuccessCallback onSuccessCallback;
+        OnErrorCallback onErrorCallback;
+        OnDownloadCallback onDownloadCallback;
+        OnEndCallback onEndCallback;
 
         /**
          * 传入context对象
@@ -212,11 +212,11 @@ public class EasyRequest<T> {
 
         /**
          * 设置请求结束回调
-         * @param endCallBack
+         * @param onEndCallback
          * @return
          */
-        public Builder setEndCallBack(EndCallBack endCallBack) {
-            this.endCallBack = endCallBack;
+        public Builder setOnEndCallback(OnEndCallback onEndCallback) {
+            this.onEndCallback = onEndCallback;
             return this;
         }
 
@@ -408,29 +408,29 @@ public class EasyRequest<T> {
 
         /**
          * 请求成功的结果回调
-         * @param successCallback
+         * @param onSuccessCallback
          * @return
          */
-        public Builder setSuccessCallback(SuccessCallback successCallback) {
-            this.successCallback = successCallback;return this;
+        public Builder setOnSuccessCallback(OnSuccessCallback onSuccessCallback) {
+            this.onSuccessCallback = onSuccessCallback;return this;
         }
 
         /**
          * 请求失败的结果回调
-         * @param errorCallback
+         * @param onErrorCallback
          * @return
          */
-        public Builder setErrorCallback(ErrorCallback errorCallback) {
-            this.errorCallback = errorCallback;return this;
+        public Builder setOnErrorCallback(OnErrorCallback onErrorCallback) {
+            this.onErrorCallback = onErrorCallback;return this;
         }
 
         /**
          * 下载的结果回调
-         * @param downloadCallback
+         * @param onDownloadCallback
          * @return
          */
-        public Builder setDownloadCallback(DownloadCallback downloadCallback) {
-            this.downloadCallback = downloadCallback;return this;
+        public Builder setOnDownloadCallback(OnDownloadCallback onDownloadCallback) {
+            this.onDownloadCallback = onDownloadCallback;return this;
         }
     }
 }

@@ -7,8 +7,8 @@ import com.liwy.easyhttp.common.EasyRequest;
  */
 
 public interface DataProcessor {
-//    public void onSuccess(String result,SuccessCallback successCallback,ErrorCallback errorCallback);
-//    public void onError(Exception e,String errorMsg,ErrorCallback errorCallback);
+//    public void onSuccess(String result,OnSuccessCallback successCallback,OnErrorCallback errorCallback);
+//    public void onError(Exception e,String errorMsg,OnErrorCallback errorCallback);
 
     /**
      * 请求成功的回调

@@ -7,10 +7,10 @@ import java.lang.reflect.Type;
  * Created by liwy on 2017/6/5.
  */
 
-public abstract class SuccessCallback<T> implements BaseSuccessListener<T> {
+public abstract class OnSuccessCallback<T> implements BaseSuccessListener<T> {
     public Class<? super T> rawType;// T generic type
     public Type mType;//T type
-    public SuccessCallback() {
+    public OnSuccessCallback() {
         //GSON解析方式
 //        this.mType = getSuperclassTypeParameter(getClass());
 //        this.rawType = (Class<? super T>) $Gson$Types.getRawType(mType);

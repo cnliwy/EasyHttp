@@ -7,20 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.common.EasyFile;
-import com.liwy.easyhttp.callback.DownloadCallback;
-import com.liwy.easyhttp.callback.ErrorCallback;
-import com.liwy.easyhttp.callback.SuccessCallback;
-import com.liwy.test.bean.Data;
-import com.liwy.test.bean.TestResult;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class NextActivity extends AppCompatActivity {
     TextView contentTv;
@@ -66,7 +58,7 @@ public class NextActivity extends AppCompatActivity {
 //                .setFileName(fileName)
 //                .setTag("download")
 //                .setFilePath(filePath)
-//                .setDownloadCallback(new DownloadCallback<File>() {
+//                .setOnDownloadCallback(new OnDownloadCallback<File>() {
 //                    @Override
 //                    public void onSuccess(File o) {
 //                        System.out.println("---->下载成功" + o.getAbsolutePath());
@@ -95,7 +87,7 @@ public class NextActivity extends AppCompatActivity {
 //
 //        List<EasyFile> files = getFiles();
 //
-//        EasyHttp.getBuilder().setUrl(url).setParams(params).setFiles(files).setSuccessCallback(new SuccessCallback<String>() {
+//        EasyHttp.getBuilder().setUrl(url).setParams(params).setFiles(files).setOnSuccessCallback(new OnSuccessCallback<String>() {
 //            @Override
 //            public void success(String result) {
 //                List<Data> type = new ArrayList<Data>();
@@ -103,7 +95,7 @@ public class NextActivity extends AppCompatActivity {
 //                System.out.println("上传成功，" + result);
 //                contentTv.setText("上传成功，" + result);
 //            }
-//        }).setErrorCallback(new ErrorCallback() {
+//        }).setOnErrorCallback(new OnErrorCallback() {
 //            @Override
 //            public void error(String errorMsg) {
 //                System.out.println(errorMsg);

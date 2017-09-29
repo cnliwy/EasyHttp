@@ -65,18 +65,35 @@ EasyHttp.getInstance().addIntercepor(new Interceptor() {
               params.put("jsonKey", "test");
               EasyRequest easyRequest = EasyHttp.getBuilder()
                       .setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData")
-                      .setParams(params)
-                      .setTag("testTag")
-                      .setSync(true) //设置本次请求为同步,默认为异步请求.
-                      .setSuccessCallback(new SuccessCallback<String>() {
+                      .setParams(params)// 请求内容，可选
+                      .setTag("testTag")//设置取消标识，可选
+                      .setSync(true) //设置本次请求为同步,默认为异步请求.可选
+                      .isLog(true)//是否打印请求结果，可选
+                      .isIntercept(false)// 是否执行拦截器，可选
+                      .setSuccessCallback(new OnSuccessCallback<String>() {
                           @Override
                           public void success(String result) {
                               System.out.println(result);
                               tvContent.setText(result);
                           }
-                       })
+                       })// 成功回调
+                       .setOnErrorCallback(new OnErrorCallback() {
+                                           @Override
+                                           public void error(Exception exception) {
+                                               System.out.println("错误回调：" + exception.getMessage());
+                                           }
+                         })//错误回调
+                       .setOnEndCallback(new OnEndCallback() {
+                           @Override
+                           public void onEnd() {
+                               System.out.println("结束回调");
+                           }
+                       })// 结束回调
                       .build();
+               // get请求
               EasyHttp.getInstance().get(easyRequest);
+              //post请求
+              EasyHttp.getInstance().post(easyRequest);
 ```
 参数也可不通过map直接传入，如下
 ```
@@ -359,9 +376,11 @@ EasyRequest.Builder使用注意
 ---
 1. 解析失败更改为执行OnError回调，原执行OnSuccess
 2. 新增可选择拦截功能。通过全局设置EasyHttp.getInstance().isIntercept(boolean)和单个设置EasyRequest的isIntercept(boolean)选择是否拦截，其中EasyRequest.isIntercept()优先级较高
-3. 新增请求结束回调。无论成功或者失败均会执行此回调接口。
-4. 更改ErrorCallBack方法，onError(String error)->onError(Exception exception)
-5. 多拦截器拦截逻辑更改为只要有一个拦截器选择拦截（return true;）就不执行ErrorCallBack回调
+3. 新增请求结束回调OnEndCallback。无论成功或者失败均会执行此回调接口。
+4. 更改ErrorCallback为OnErrorCallback方法，onError(String error)为onError(Exception exception)
+5. 更改SuccessCallback为OnSuccessCallback
+6. 更改DownloadCallback为OnDownloadCallback
+7. 多拦截器拦截逻辑更改为只要有一个拦截器选择拦截（return true;）就不执行ErrorCallBack回调
 
 
 1.0.9(最新)

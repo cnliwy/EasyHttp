@@ -7,20 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.liwy.easyhttp.DataParse.DataParser;
 import com.liwy.easyhttp.EasyHttp;
-import com.liwy.easyhttp.callback.ErrorCallback;
-import com.liwy.easyhttp.callback.SuccessCallback;
-import com.liwy.test.bean.Data;
-import com.liwy.test.bean.LoginResponse;
-import com.liwy.test.bean.Test;
-import com.liwy.test.xml.XmlTask;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.liwy.easyhttp.common.Constants.MEDIA_TYPE_FORM;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -104,13 +91,13 @@ public class MainActivity extends AppCompatActivity {
 //                .setTag("get")
 //                .setParams(params)
 //                .setContentType(MEDIA_TYPE_FORM) // 设置post的请求内容格式，不设置采用默认方式
-//                .setSuccessCallback(new SuccessCallback<String>() {
+//                .setOnSuccessCallback(new OnSuccessCallback<String>() {
 //                    @Override
 //                    public void success(String result) {
 //                        System.out.println(result);
 //                        contentTv.setText("get = " + result);
 //                    }})
-//                .setErrorCallback(new ErrorCallback() {
+//                .setOnErrorCallback(new OnErrorCallback() {
 //                    @Override
 //                    public void error(String errorMsg) {
 //                        contentTv.setText("请求失败");
@@ -127,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 //        EasyHttp.getBuilder()
 //                .setUrl("http://39.108.234.92:8888/cnliwy/appdata/getTestData")
 //                .setParams(params)
-//                .setSuccessCallback(new SuccessCallback<List<Data>>() {
+//                .setOnSuccessCallback(new OnSuccessCallback<List<Data>>() {
 //                    @Override
 //                    public void success(List<Data> result) {
 ////                        System.out.println(result.toString());
@@ -146,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 //                    }
 //                })
 //                .setContentType(CONTENT_TYPE_FORM)
-//                .setErrorCallback(new ErrorCallback() {
+//                .setOnErrorCallback(new OnErrorCallback() {
 //                    @Override
 //                    public void error(String errorMsg) {
 //                        contentTv.setText("请求失败");
@@ -164,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 //        EasyHttp.getBuilder()
 //                .setUrl("http://39.108.234.92:8888/cnliwy/appdata/getTestData")
 //                .setParams(params)
-//                .setSuccessCallback(new SuccessCallback<Data>() {
+//                .setOnSuccessCallback(new OnSuccessCallback<Data>() {
 //                    @Override
 //                    public void success(Data result) {
 //                        System.out.println(result.toString());
@@ -172,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 //                    }
 //                })
 //                .setContentType(CONTENT_TYPE_FORM)
-//                .setErrorCallback(new ErrorCallback() {
+//                .setOnErrorCallback(new OnErrorCallback() {
 //                    @Override
 //                    public void error(String errorMsg) {
 //                        contentTv.setText("请求失败");
@@ -195,12 +182,12 @@ public class MainActivity extends AppCompatActivity {
 //                .setUrl("http://192.168.1.147:8008/GCPServer.asmx/DeviceLogin")
 //                .setParams(params)
 //                .setParseType(DataParser.PARSE_XML)
-//                .setSuccessCallback(new SuccessCallback<LoginResponse>() {
+//                .setOnSuccessCallback(new OnSuccessCallback<LoginResponse>() {
 //                    @Override
 //                    public void success(LoginResponse result) {
 //                        contentTv.setText("get = " + result.toString());
 //                    }})
-//                .setErrorCallback(new ErrorCallback() {
+//                .setOnErrorCallback(new OnErrorCallback() {
 //                    @Override
 //                    public void error(String errorMsg) {
 //                        contentTv.setText("请求失败");
@@ -218,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 //                .setUrl("http://192.168.1.147:8008/GCPServer.asmx/ListNewTasks")
 //                .setParams(params)
 //                .setParseType(DataParser.PARSE_XML)
-//                .setSuccessCallback(new SuccessCallback<XmlTask>() {
+//                .setOnSuccessCallback(new OnSuccessCallback<XmlTask>() {
 //                    @Override
 //                    public void success(XmlTask result) {
 //                        if(result != null && result.dataList != null){
@@ -232,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 //                        }
 //
 //                    }})
-//                .setErrorCallback(new ErrorCallback() {
+//                .setOnErrorCallback(new OnErrorCallback() {
 //                    @Override
 //                    public void error(String errorMsg) {
 //                        contentTv.setText("请求失败");
@@ -251,13 +238,13 @@ public class MainActivity extends AppCompatActivity {
 //                .setUrl("http://192.168.131.19:8886/login/online")
 //                .setTag("post")
 //                .setParams(params)
-//                .setSuccessCallback(new SuccessCallback<String>() {
+//                .setOnSuccessCallback(new OnSuccessCallback<String>() {
 //                    @Override
 //                    public void success(String result) {
 //                        contentTv.setText("post = " + result);
 //                        System.out.println("post=" + result);
 //                    }})
-//                .setErrorCallback(new ErrorCallback() {
+//                .setOnErrorCallback(new OnErrorCallback() {
 //                    @Override
 //                    public void error(String errorMsg) {
 //                        contentTv.setText("请求失败");

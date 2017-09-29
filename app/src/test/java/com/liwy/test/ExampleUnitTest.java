@@ -2,7 +2,7 @@ package com.liwy.test;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.$Gson$Types;
-import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.callback.OnSuccessCallback;
 import com.liwy.test.bean.Data;
 import com.liwy.test.bean.TestResult;
 
@@ -32,13 +32,13 @@ public class ExampleUnitTest {
     }
     @Test
     public void testType(){
-        SuccessCallback<List<Data>> successCallback = new SuccessCallback<List<Data>>() {
+        OnSuccessCallback<List<Data>> onSuccessCallback = new OnSuccessCallback<List<Data>>() {
             @Override
             public void success(List<Data> result) {
 
             }
         };
-        Type type = getSuperclassTypeParameter(successCallback.getClass());
+        Type type = getSuperclassTypeParameter(onSuccessCallback.getClass());
 //        System.out.println(type.toString());
     }
     public Type getSuperclassTypeParameter(Class<?> subclass) {
@@ -55,7 +55,7 @@ public class ExampleUnitTest {
     @Test
     public void testClass(){
         TestResult result = new TestResult();
-        SuccessCallback<TestResult> callback = new SuccessCallback<TestResult>() {
+        OnSuccessCallback<TestResult> callback = new OnSuccessCallback<TestResult>() {
             @Override
             public void success(TestResult result) {
                 System.out.println(result.toString());

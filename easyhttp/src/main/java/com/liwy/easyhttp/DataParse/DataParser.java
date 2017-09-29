@@ -4,8 +4,8 @@ import android.util.Xml;
 
 import com.google.gson.Gson;
 import com.liwy.easyhttp.callback.DataProcessor;
-import com.liwy.easyhttp.callback.ErrorCallback;
-import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.callback.OnErrorCallback;
+import com.liwy.easyhttp.callback.OnSuccessCallback;
 import com.liwy.easyhttp.common.EasyRequest;
 import com.liwy.easyhttp.interceptor.Interceptor;
 
@@ -40,16 +40,16 @@ public class DataParser {
         DataParser.addCallback(DataParser.PARSE_GSON,new DataProcessor() {
             @Override
             public void onSuccess(String result,EasyRequest req) {
-                SuccessCallback successCallback = req.getSuccessCallback();
-                if (successCallback != null){
-                    if (successCallback.mType == String.class || successCallback.mType == null){
-                        executeSuccessInterceptor(result,successCallback,req.isIntercept());
+                OnSuccessCallback onSuccessCallback = req.getOnSuccessCallback();
+                if (onSuccessCallback != null){
+                    if (onSuccessCallback.mType == String.class || onSuccessCallback.mType == null){
+                        executeSuccessInterceptor(result, onSuccessCallback,req.isIntercept());
                     }else{
                         try {
-                            executeSuccessInterceptor(new Gson().fromJson(result,successCallback.mType),successCallback,req.isIntercept());
+                            executeSuccessInterceptor(new Gson().fromJson(result, onSuccessCallback.mType), onSuccessCallback,req.isIntercept());
                         } catch (Exception e) {
                             e.printStackTrace();
-//                            executeSuccessInterceptor(null,successCallback,req.isIntercept());
+//                            executeSuccessInterceptor(null,onSuccessCallback,req.isIntercept());
                             // 解析失败应该调onError接口
                             onError(e,req);
                         }
@@ -59,24 +59,24 @@ public class DataParser {
 
             @Override
             public void onError(Exception e,EasyRequest req) {
-                ErrorCallback errorCallback = req.getErrorCallback();
+                OnErrorCallback onErrorCallback = req.getOnErrorCallback();
                 String errorMsg = e.getMessage();
-                if (errorCallback != null)executeErrorInterceptor(e,errorCallback,req.isIntercept());
+                if (onErrorCallback != null)executeErrorInterceptor(e, onErrorCallback,req.isIntercept());
             }
         });
         // 添加xml解析
         DataParser.addCallback(DataParser.PARSE_XML, new DataProcessor() {
             @Override
             public void onSuccess(String result,EasyRequest req) {
-                SuccessCallback successCallback = req.getSuccessCallback();
-                if (successCallback != null){
-                    if (successCallback.rawType == String.class || successCallback.rawType == null){
-                        if (successCallback != null)
-                        executeSuccessInterceptor(result,successCallback,req.isIntercept());
+                OnSuccessCallback onSuccessCallback = req.getOnSuccessCallback();
+                if (onSuccessCallback != null){
+                    if (onSuccessCallback.rawType == String.class || onSuccessCallback.rawType == null){
+                        if (onSuccessCallback != null)
+                        executeSuccessInterceptor(result, onSuccessCallback,req.isIntercept());
                     }else{
-                        if (successCallback != null){
+                        if (onSuccessCallback != null){
                             try {
-                                executeSuccessInterceptor(getXMLObject(convertToParseContent(result),successCallback.rawType),successCallback,req.isIntercept());
+                                executeSuccessInterceptor(getXMLObject(convertToParseContent(result), onSuccessCallback.rawType), onSuccessCallback,req.isIntercept());
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 onError(e,req);
@@ -88,9 +88,9 @@ public class DataParser {
 
             @Override
             public void onError(Exception e,EasyRequest req) {
-                ErrorCallback errorCallback = req.getErrorCallback();
+                OnErrorCallback onErrorCallback = req.getOnErrorCallback();
                 String errorMsg = e.getMessage();
-                if (errorCallback != null)executeErrorInterceptor(e,errorCallback,req.isIntercept());
+                if (onErrorCallback != null)executeErrorInterceptor(e, onErrorCallback,req.isIntercept());
             }
         });
     }
@@ -114,26 +114,26 @@ public class DataParser {
     /**
      * 请求成功后执行拦截器
      * @param obj
-     * @param successCallback
+     * @param onSuccessCallback
      */
-    private static void executeSuccessInterceptor(Object obj,SuccessCallback successCallback,boolean isIntercept){
+    private static void executeSuccessInterceptor(Object obj, OnSuccessCallback onSuccessCallback, boolean isIntercept){
         if (interceptors != null && interceptors.size() > 0 && isIntercept){
             for (Interceptor interceptor : interceptors){
                 if (!interceptor.processSuccess(obj)){
-                    successCallback.success(obj);
+                    onSuccessCallback.success(obj);
                 }
             }
         }else{
-            successCallback.success(obj);
+            onSuccessCallback.success(obj);
         }
     }
 
     /**
      * 请求失败后执行拦截器
 //     * @param error
-     * @param errorCallback
+     * @param onErrorCallback
      */
-    private static void executeErrorInterceptor(Exception exception,ErrorCallback errorCallback,boolean isIntercept){
+    private static void executeErrorInterceptor(Exception exception, OnErrorCallback onErrorCallback, boolean isIntercept){
         if (interceptors != null && interceptors.size() > 0 && isIntercept){
             boolean intercepted = false;
             for (Interceptor interceptor : interceptors){
@@ -142,9 +142,9 @@ public class DataParser {
                     intercepted = true;
                 }
             }
-            if (!intercepted)errorCallback.error(exception.getMessage());
+            if (!intercepted) onErrorCallback.error(exception);
         }else{
-            errorCallback.error(exception.getMessage());
+            onErrorCallback.error(exception);
         }
     }
 

@@ -6,8 +6,6 @@ import android.util.Log;
 import com.liwy.easyhttp.EasyHttp;
 import com.liwy.easyhttp.callback.DataProcessor;
 import com.liwy.easyhttp.DataParse.DataParser;
-import com.liwy.easyhttp.callback.ErrorCallback;
-import com.liwy.easyhttp.callback.SuccessCallback;
 import com.liwy.easyhttp.common.Constants;
 import com.liwy.easyhttp.common.EasyRequest;
 import com.liwy.easyhttp.impl.RequestService;
@@ -18,8 +16,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by liwy on 2017/6/12.

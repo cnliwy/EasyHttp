@@ -7,16 +7,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.liwy.easyhttp.EasyHttp;
-import com.liwy.easyhttp.callback.DownloadCallback;
-import com.liwy.easyhttp.callback.EndCallBack;
-import com.liwy.easyhttp.callback.ErrorCallback;
-import com.liwy.easyhttp.callback.SuccessCallback;
+import com.liwy.easyhttp.callback.OnDownloadCallback;
+import com.liwy.easyhttp.callback.OnEndCallback;
+import com.liwy.easyhttp.callback.OnErrorCallback;
+import com.liwy.easyhttp.callback.OnSuccessCallback;
 import com.liwy.easyhttp.common.EasyFile;
 import com.liwy.easyhttp.common.EasyRequest;
 import com.liwy.easyhttp.common.ProcessUtils;
-import com.liwy.easyhttp.impl.RequestService;
 import com.liwy.test.bean.Data;
 
 import java.io.File;
@@ -96,7 +94,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
 
         List<EasyFile> files = getFiles();
 
-        EasyRequest request = EasyHttp.getBuilder().setUrl(url).setParams(params).setUploadFiles(files).setSuccessCallback(new SuccessCallback<String>() {
+        EasyRequest request = EasyHttp.getBuilder().setUrl(url).setParams(params).setUploadFiles(files).setOnSuccessCallback(new OnSuccessCallback<String>() {
             @Override
             public void success(String result) {
 //                List<Data> type = new ArrayList<Data>();
@@ -104,9 +102,9 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println("进入成功回调，" + result);
                 tvContent.setText("上传成功？");
             }
-        }).setErrorCallback(new ErrorCallback() {
+        }).setOnErrorCallback(new OnErrorCallback() {
             @Override
-            public void error(String errorMsg) {
+            public void error(Exception errorMsg) {
                 System.out.println(errorMsg);
                 tvContent.setText("上传失败"+ errorMsg);
             }
@@ -137,7 +135,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                         .setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData")
                         .setParams(params)
                         .setSync(true)
-                        .setSuccessCallback(new SuccessCallback<String>() {
+                        .setOnSuccessCallback(new OnSuccessCallback<String>() {
                             @Override
                             public void success(String result) {
                                 System.out.println(result);
@@ -163,7 +161,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
 //                .setFileName(fileName)
                 .setTag(tag)
                 .setSaveDir(filePath)
-                .setDownloadCallback(new DownloadCallback<File>() {
+                .setOnDownloadCallback(new OnDownloadCallback<File>() {
                     @Override
                     public void onSuccess(File o) {
                         System.out.println("---->下载成功" + o.getAbsolutePath());
@@ -194,23 +192,25 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                 .setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData")
                 .setParams(params)
                 .setSync(false)
-                .setSuccessCallback(new SuccessCallback<String>() {
+                .isLog(true)//是否打印请求结果
+                .isIntercept(false)// 是否执行拦截器
+                .setOnSuccessCallback(new OnSuccessCallback<String>() {
                     @Override
                     public void success(String result) {
                         System.out.println(result);
                         tvContent.setText(result);
                     }
                  })
-                .setErrorCallback(new ErrorCallback() {
+                .setOnErrorCallback(new OnErrorCallback() {
                     @Override
-                    public void error(String errorMsg) {
-                        System.out.println("错误回调：" + errorMsg);
+                    public void error(Exception exception) {
+                        System.out.println("错误回调：" + exception.getMessage());
                     }
                 })
-                .setEndCallBack(new EndCallBack() {
+                .setOnEndCallback(new OnEndCallback() {
                     @Override
                     public void onEnd() {
-                        System.out.println("请求结束了");
+                        System.out.println("结束回调");
                     }
                 })
                 .build();
@@ -226,7 +226,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
         EasyRequest easyRequest = new EasyRequest.Builder()
                 .setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData")
                 .setParams(params)
-                .setSuccessCallback(new SuccessCallback<List<Data>>() {
+                .setOnSuccessCallback(new OnSuccessCallback<List<Data>>() {
                     @Override
                     public void success(List<Data> result) {
                         System.out.println(result.size() + "个data");
@@ -247,7 +247,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                 .setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData")
                 .addParam("identity", "40283c825d2bca81015d2bcabe850000")
                 .addParam("jsonKey", "getDatas")
-                .setSuccessCallback(new SuccessCallback<List<Data>>() {
+                .setOnSuccessCallback(new OnSuccessCallback<List<Data>>() {
                     @Override
                     public void success(List<Data> result) {
                         for (Data data : result){
@@ -256,9 +256,9 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                         tvContent.setText("成功获取数据：" + result.toString());
                     }
                 })
-                .setErrorCallback(new ErrorCallback() {
+                .setOnErrorCallback(new OnErrorCallback() {
                     @Override
-                    public void error(String errorMsg) {
+                    public void error(Exception errorMsg) {
                         System.out.println("请求失败");
                     }
                 })
@@ -280,7 +280,7 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
 //        RequestBody requestBody = RequestBody.create(mediaType,content);
         RequestBody requestBody = ProcessUtils.map2form(params);
         EasyRequest easyRequest =  EasyHttp.getBuilder().setUrl("http://192.168.131.19:8080/cnliwy/appdata/getTestData").requestBody(requestBody)
-                .setSuccessCallback(new SuccessCallback() {
+                .setOnSuccessCallback(new OnSuccessCallback() {
                     @Override
                     public void success(Object result) {
                         System.out.println(result.toString());

@@ -115,7 +115,7 @@ public class RequestService implements IHttpService{
                         String type = "";
                         if (req.getParseType() != null && !"".equals(req.getParseType()))type = req.getParseType();
                         else type = DataParser.getDefaultParseType();
-//                        DataParser.getCallbackMap().get(type).onError(e.toString(),req.getErrorCallback());
+//                        DataParser.getCallbackMap().get(type).onError(e.toString(),req.getOnErrorCallback());
                         DataParser.getCallbackMap().get(type).onError(e,req);
                     }
                 });
@@ -130,7 +130,7 @@ public class RequestService implements IHttpService{
                         String type = "";
                         if (req.getParseType() != null && !"".equals(req.getParseType()))type = req.getParseType();
                         else type = DataParser.getDefaultParseType();
-//                        DataParser.getCallbackMap().get(type).onSuccess(content,req.getSuccessCallback());
+//                        DataParser.getCallbackMap().get(type).onSuccess(content,req.getOnSuccessCallback());
                         DataParser.getCallbackMap().get(type).onSuccess(content,req);
                     }
                 });
@@ -151,7 +151,7 @@ public class RequestService implements IHttpService{
         final File file = new File(req.getSaveDir(), fileName);
         if (file.exists()) {
             System.out.println("file has already exists!");
-            req.getDownloadCallback().onSuccess((T)file);
+            req.getOnDownloadCallback().onSuccess((T)file);
             return;
         }
         final Request request = new Request.Builder().url(req.getUrl()).build();
@@ -166,7 +166,7 @@ public class RequestService implements IHttpService{
                 mainThread.execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (req.getDownloadCallback() != null)req.getDownloadCallback().onError("download faied!");
+                        if (req.getOnDownloadCallback() != null)req.getOnDownloadCallback().onError("download faied!");
                     }
                 });
             }
@@ -192,7 +192,7 @@ public class RequestService implements IHttpService{
                             mainThread.execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (req.getDownloadCallback() != null)req.getDownloadCallback().onProgress(total, progress);
+                                    if (req.getOnDownloadCallback() != null)req.getOnDownloadCallback().onProgress(total, progress);
                                 }
                             });
                         }
@@ -201,7 +201,7 @@ public class RequestService implements IHttpService{
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (req.getDownloadCallback() != null)req.getDownloadCallback().onSuccess((T)file);
+                            if (req.getOnDownloadCallback() != null)req.getOnDownloadCallback().onSuccess((T)file);
                         }
                     });
 
@@ -213,7 +213,7 @@ public class RequestService implements IHttpService{
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (req.getDownloadCallback() != null)req.getDownloadCallback().onError("下载异常:" + e.toString());
+                            if (req.getOnDownloadCallback() != null)req.getOnDownloadCallback().onError("下载异常:" + e.toString());
                         }
                     });
 
@@ -349,21 +349,21 @@ public class RequestService implements IHttpService{
                 if (response != null && response.isSuccessful()){
                     final String content = response.body().string();
                     if (req.isLog())Log.e(TAG, "success---->" + content );
-//                    DataParser.getCallbackMap().get(type).onSuccess(content,req.getSuccessCallback());
+//                    DataParser.getCallbackMap().get(type).onSuccess(content,req.getOnSuccessCallback());
                     DataParser.getCallbackMap().get(parseType).onSuccess(content,req);
                 }else{
-//                    DataParser.getCallbackMap().get(parseType).onError("网络请求失败",req.getErrorCallback());
+//                    DataParser.getCallbackMap().get(parseType).onError("网络请求失败",req.getOnErrorCallback());
                     NullPointerException exception = new NullPointerException("网络请求失败");
                     DataParser.getCallbackMap().get(parseType).onError(exception,req);
                 }
-                if (req.getEndCallBack() != null)req.getEndCallBack().onEnd();
+                if (req.getOnEndCallback() != null)req.getOnEndCallback().onEnd();
             } catch (IOException e) {
                 e.printStackTrace();
                 removeCall(req.getTag());
                 if (req.isLog())Log.e(TAG, "error---->" + e.getMessage() );
-//                DataParser.getCallbackMap().get(type).onError("网络请求失败",req.getErrorCallback());
+//                DataParser.getCallbackMap().get(type).onError("网络请求失败",req.getOnErrorCallback());
                 DataParser.getCallbackMap().get(parseType).onError(e,req);
-                if (req.getEndCallBack() != null)req.getEndCallBack().onEnd();
+                if (req.getOnEndCallback() != null)req.getOnEndCallback().onEnd();
             }
         }else{
             // 异步
@@ -375,9 +375,9 @@ public class RequestService implements IHttpService{
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
-//                            DataParser.getCallbackMap().get(parseType).onError(e.toString(),req.getErrorCallback());
+//                            DataParser.getCallbackMap().get(parseType).onError(e.toString(),req.getOnErrorCallback());
                             DataParser.getCallbackMap().get(parseType).onError(e,req);
-                            if (req.getEndCallBack() != null)req.getEndCallBack().onEnd();
+                            if (req.getOnEndCallback() != null)req.getOnEndCallback().onEnd();
                         }
                     });
                 }
@@ -390,9 +390,9 @@ public class RequestService implements IHttpService{
                     mainThread.execute(new Runnable() {
                         @Override
                         public void run() {
-//                            DataParser.getCallbackMap().get(parseType).onSuccess(content,req.getSuccessCallback());
+//                            DataParser.getCallbackMap().get(parseType).onSuccess(content,req.getOnSuccessCallback());
                             DataParser.getCallbackMap().get(parseType).onSuccess(content,req);
-                            if (req.getEndCallBack() != null)req.getEndCallBack().onEnd();
+                            if (req.getOnEndCallback() != null)req.getOnEndCallback().onEnd();
                         }
                     });
                 }
