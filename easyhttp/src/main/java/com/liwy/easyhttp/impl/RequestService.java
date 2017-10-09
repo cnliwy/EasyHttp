@@ -163,6 +163,7 @@ public class RequestService implements IHttpService{
             @Override
             public void onFailure(Call call, IOException e) {
                 removeCall(req.getTag());
+                file.delete();
                 mainThread.execute(new Runnable() {
                     @Override
                     public void run() {
