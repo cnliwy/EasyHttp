@@ -98,13 +98,24 @@ public class RequestService implements IHttpService{
                 builder.addFormDataPart(key,String.valueOf(params.get(key)));
             }
         }
-
         MultipartBody requestBody = builder.build();
+
+
         //构建请求
-        Request request = new Request.Builder()
-                .url(req.getUrl())//地址
-                .post(requestBody)//添加请求体
-                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(req.getUrl())
+                .post(requestBody);
+
+        // 组装header
+        Map<String,String> headers = req.getHeader();
+        if (headers != null && headers.size() > 0){
+            Set<String> keySet = headers.keySet();
+            for (String key : keySet){
+                requestBuilder.addHeader(key,headers.get(key));
+            }
+        }
+
+        Request request = requestBuilder.build();
         // 上传文件耗时较大，需加长超时时间
         okHttpClient.newBuilder().connectTimeout(1, TimeUnit.DAYS).readTimeout(1,TimeUnit.DAYS).writeTimeout(1,TimeUnit.DAYS).build().newCall(request).enqueue(new Callback() {
             @Override

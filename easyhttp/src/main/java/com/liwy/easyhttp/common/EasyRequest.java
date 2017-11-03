@@ -2,12 +2,14 @@ package com.liwy.easyhttp.common;
 
 
 import android.content.Context;
+import android.os.Build;
 
 import com.liwy.easyhttp.callback.OnDownloadCallback;
 import com.liwy.easyhttp.callback.OnEndCallback;
 import com.liwy.easyhttp.callback.OnErrorCallback;
 import com.liwy.easyhttp.callback.OnSuccessCallback;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -314,6 +316,11 @@ public class EasyRequest<T> {
          */
         public Builder setUploadFiles(List<EasyFile> uploadFiles) {
             this.uploadFiles = uploadFiles;
+            return this;
+        }
+        public Builder addUploadFile(EasyFile easyFile){
+            if (this.uploadFiles == null)this.uploadFiles = new ArrayList<>();
+            this.uploadFiles.add(easyFile);
             return this;
         }
 

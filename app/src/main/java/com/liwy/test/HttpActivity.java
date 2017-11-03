@@ -84,13 +84,24 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    // 需要上传的文件
+    public List<EasyFile> getFiles(){
+        List<EasyFile> files = new ArrayList<>();
+//        files.add(new EasyFile("fil2",filePath + "test1.apk","application/vnd.android.package-archive",new File(filePath + "test.apk")));
+//        files.add(new EasyFile("image1",filePath + "easy.jpeg","image/png",new File(filePath + "easy.jpeg")));
+        files.add(new EasyFile("file", "123.jpg","image/png",new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/123.png")));
+        files.add(new EasyFile("file", "fengjianbo.amr","audio/amr-wb",new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/fengjianbo.amr")));
+        return files;
+    }
     public void upload(){
-        String url = "http://192.168.131.19:8080/cnliwy/appdata/uploadFile";
+        String url = "http://192.168.133.32:7010/webapi/subject/uploadFile.sv";
         // 参数
         Map<String,Object> params = new HashMap<>();
         params.put("title","upload head icon and apk");
         params.put("uploader","cnliwy");
         params.put("uploadType","image and apk");
+        params.put("eventId","6666666");
 
         List<EasyFile> files = getFiles();
 
@@ -108,19 +119,17 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println(errorMsg);
                 tvContent.setText("上传失败"+ errorMsg);
             }
-        }).build();
+        }).setOnEndCallback(new OnEndCallback() {
+            @Override
+            public void onEnd() {
+                System.out.println("上传结束");
+            }
+        })
+                .build();
         EasyHttp.getInstance().upload(request);
     }
 
-    // 需要上传的文件
-    public List<EasyFile> getFiles(){
-        List<EasyFile> files = new ArrayList<>();
-//        files.add(new EasyFile("fil2",filePath + "test1.apk","application/vnd.android.package-archive",new File(filePath + "test.apk")));
-//        files.add(new EasyFile("image1",filePath + "easy.jpeg","image/png",new File(filePath + "easy.jpeg")));
-        files.add(new EasyFile("image2",filePath + "head.jpg","image/png",new File(filePath + "head.jpg")));
-        files.add(new EasyFile("bgimg",filePath + "code.png","image/png",new File(filePath + "code.png")));
-        return files;
-    }
+
 
     public void syncHttp(){
         new Thread(new Runnable() {
