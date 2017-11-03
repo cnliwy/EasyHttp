@@ -135,6 +135,7 @@ public class RequestService implements IHttpService{
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 final String content = response.body().string();
+                if (req.isLog())Log.e(TAG, "success---->" + content );
                 mainThread.execute(new Runnable() {
                     @Override
                     public void run() {

@@ -372,7 +372,7 @@ EasyRequest.Builder使用注意
 
 更新日志
 ---
-1.1.2(最新版)
+1.1.3(最新版)
 ---
 1. 新增EasyRequest.addUploadFile()方法
 2. 完善上传请求的header添加
