@@ -98,33 +98,38 @@ public class HttpActivity extends AppCompatActivity implements View.OnClickListe
         String url = "http://192.168.133.32:7010/webapi/subject/uploadFile.sv";
         // 参数
         Map<String,Object> params = new HashMap<>();
-        params.put("title","upload head icon and apk");
-        params.put("uploader","cnliwy");
-        params.put("uploadType","image and apk");
-        params.put("eventId","6666666");
+        params.put("fileType","2");
+        params.put("fileName","testrecord.amr");
+        params.put("eventId","113045");
+        params.put("scheduleId","100278");
+        params.put("barCode","111347100378");
 
-        List<EasyFile> files = getFiles();
-
-        EasyRequest request = EasyHttp.getBuilder().setUrl(url).setParams(params).setUploadFiles(files).setOnSuccessCallback(new OnSuccessCallback<String>() {
-            @Override
-            public void success(String result) {
-//                List<Data> type = new ArrayList<Data>();
-//                List<Data> list = new Gson().fromJson(result,type.getClass());
-                System.out.println("进入成功回调，" + result);
-                tvContent.setText("上传成功？");
-            }
-        }).setOnErrorCallback(new OnErrorCallback() {
-            @Override
-            public void error(Exception errorMsg) {
-                System.out.println(errorMsg);
-                tvContent.setText("上传失败"+ errorMsg);
-            }
-        }).setOnEndCallback(new OnEndCallback() {
-            @Override
-            public void onEnd() {
-                System.out.println("上传结束");
-            }
-        })
+        EasyFile uploadFile = new EasyFile("file","testrecord.amr","audio/amr-wb",new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/testrecord.amr"));
+        System.out.println("---------------->" + params.toString());
+        EasyRequest request = EasyHttp.getBuilder()
+                .addHeader("session","67C8290387434928AD097F68A0B69FA5")
+                .addHeader("userId","100004")
+                .setUrl(url)
+                .setParams(params)
+                .addUploadFile(uploadFile)
+                .setOnSuccessCallback(new OnSuccessCallback<String>() {
+                    @Override
+                    public void success(String result) {
+                             System.out.println("进入成功回调，" + result);
+                            tvContent.setText("上传成功？");
+                    }
+                    }).setOnErrorCallback(new OnErrorCallback() {
+                        @Override
+                        public void error(Exception errorMsg) {
+                            System.out.println(errorMsg);
+                            tvContent.setText("上传失败"+ errorMsg);
+                        }
+                    }).setOnEndCallback(new OnEndCallback() {
+                        @Override
+                        public void onEnd() {
+                            System.out.println("上传结束");
+                        }
+                    })
                 .build();
         EasyHttp.getInstance().upload(request);
     }

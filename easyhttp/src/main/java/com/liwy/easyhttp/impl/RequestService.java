@@ -116,8 +116,12 @@ public class RequestService implements IHttpService{
         }
 
         Request request = requestBuilder.build();
+        OkHttpClient okHttpClient2 = okHttpClient.newBuilder().connectTimeout(1, TimeUnit.DAYS).readTimeout(1,TimeUnit.DAYS).writeTimeout(1,TimeUnit.DAYS).build();
+
+        Call call = processCall(req.getTag(),okHttpClient2,request);
+
         // 上传文件耗时较大，需加长超时时间
-        okHttpClient.newBuilder().connectTimeout(1, TimeUnit.DAYS).readTimeout(1,TimeUnit.DAYS).writeTimeout(1,TimeUnit.DAYS).build().newCall(request).enqueue(new Callback() {
+        call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, final IOException e) {
                 mainThread.execute(new Runnable() {
@@ -341,7 +345,7 @@ public class RequestService implements IHttpService{
      */
     private Call processCall(Object tag,OkHttpClient okHttpClient,Request request){
         Call call = okHttpClient.newCall(request);
-        addCall(tag,call);
+        if (tag != null && !"".equals(tag))addCall(tag,call);
         return  call;
     }
 
@@ -362,10 +366,8 @@ public class RequestService implements IHttpService{
                 if (response != null && response.isSuccessful()){
                     final String content = response.body().string();
                     if (req.isLog())Log.e(TAG, "success---->" + content );
-//                    DataParser.getCallbackMap().get(type).onSuccess(content,req.getOnSuccessCallback());
                     DataParser.getCallbackMap().get(parseType).onSuccess(content,req);
                 }else{
-//                    DataParser.getCallbackMap().get(parseType).onError("网络请求失败",req.getOnErrorCallback());
                     NullPointerException exception = new NullPointerException("网络请求失败");
                     DataParser.getCallbackMap().get(parseType).onError(exception,req);
                 }
@@ -374,7 +376,6 @@ public class RequestService implements IHttpService{
                 e.printStackTrace();
                 removeCall(req.getTag());
                 if (req.isLog())Log.e(TAG, "error---->" + e.getMessage() );
-//                DataParser.getCallbackMap().get(type).onError("网络请求失败",req.getOnErrorCallback());
                 DataParser.getCallbackMap().get(parseType).onError(e,req);
                 if (req.getOnEndCallback() != null)req.getOnEndCallback().onEnd();
             }

@@ -2,7 +2,7 @@ EasyHttp
 ===
 一、 引入项目
 ---
-compile 'com.liwy.easyhttp:easyhttp:1.0.9'
+compile 'com.liwy.easyhttp:easyhttp:1.1.4'
 
 二、 初始化
 ---
@@ -372,7 +372,11 @@ EasyRequest.Builder使用注意
 
 更新日志
 ---
-1.1.3(最新版)
+1.1.4(最新版)
+---
+1.上传请求可取消 
+
+1.1.3
 ---
 1. 新增EasyRequest.addUploadFile()方法
 2. 完善上传请求的header添加
